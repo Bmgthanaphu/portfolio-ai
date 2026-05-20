@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-05-21T02:41:50.846314+07:00",
-  "last_updated_bkk": "21 May 2026, 02:41 น. (BKK)",
+  "last_updated": "2026-05-21T05:12:21.034053+07:00",
+  "last_updated_bkk": "21 May 2026, 05:12 น. (BKK)",
   "nav_usd": 3142,
   "nav_thb": 113112.0,
   "cash_usd": 278,
   "cash_thb": 10000,
-  "spy_price": 741.26,
+  "spy_price": 741.25,
   "holdings": [
     {
       "ticker": "AMZN",
@@ -94,7 +94,7 @@
       "reason": "GLP-1 monopoly potential"
     }
   ],
-  "recommendation": "Error generating recommendation: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
+  "recommendation": "",
   "philosophy": {
     "style": "Quality Growth",
     "hold_min_months": 6,
