@@ -1,0 +1,95 @@
+name: Portfolio AI
+
+on:
+  schedule:
+    # All times in UTC. Bangkok = UTC+7
+    # 08:00 BKK = 01:00 UTC  → morning briefing
+    - cron: '0 1 * * 1-5'
+    # 20:00 BKK = 13:00 UTC  → pre-market US (opens 20:30 BKK)
+    - cron: '0 13 * * 1-5'
+    # 03:30 BKK = 20:30 UTC  → after US market close
+    - cron: '30 20 * * 1-5'
+    # Hourly lightweight scan 09:00-23:00 BKK (02:00-16:00 UTC)
+    - cron: '0 2-16 * * 1-5'
+    # Saturday 09:00 BKK = 02:00 UTC → weekly review
+    - cron: '0 2 * * 6'
+
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: true
+        default: 'scan'
+        type: choice
+        options:
+          - scan
+          - weekly
+          - earnings
+      ticker:
+        description: 'Ticker for earnings mode (e.g. AMZN)'
+        required: false
+        default: ''
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install google-genai requests pytz yfinance
+
+      - name: Determine run mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=${{ inputs.mode }}" >> $GITHUB_OUTPUT
+            echo "ticker=${{ inputs.ticker }}" >> $GITHUB_OUTPUT
+          else
+            # Determine mode from current UTC hour
+            HOUR=$(date -u +%H)
+            DAY=$(date -u +%u)  # 1=Mon, 7=Sun
+            
+            if [ "$DAY" = "6" ] && [ "$HOUR" = "02" ]; then
+              echo "mode=weekly" >> $GITHUB_OUTPUT
+            elif [ "$HOUR" = "13" ] || [ "$HOUR" = "01" ] || [ "$HOUR" = "20" ]; then
+              echo "mode=weekly" >> $GITHUB_OUTPUT
+            else
+              echo "mode=scan" >> $GITHUB_OUTPUT
+            fi
+            echo "ticker=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run analysis
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          THB_RATE: '36'
+        run: |
+          MODE="${{ steps.mode.outputs.mode }}"
+          TICKER="${{ steps.mode.outputs.ticker }}"
+          
+          if [ "$MODE" = "earnings" ] && [ -n "$TICKER" ]; then
+            python scripts/analyze.py earnings $TICKER
+          else
+            python scripts/analyze.py $MODE
+          fi
+
+      - name: Commit updated data
+        run: |
+          git config user.name "Portfolio AI"
+          git config user.email "ai@portfolio"
+          git add data/ docs/thesis/
+          git diff --staged --quiet || git commit -m "Auto: update portfolio data $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
+        continue-on-error: true

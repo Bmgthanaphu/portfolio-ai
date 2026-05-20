@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0f0e;
+  --surface: #161817;
+  --surface2: #1e201e;
+  --border: #2a2d2a;
+  --text: #e8ebe5;
+  --muted: #8a8f87;
+  --accent: #b8f07c;
+  --accent-dim: rgba(184,240,124,0.12);
+  --red: #f07c7c;
+  --red-dim: rgba(240,124,124,0.12);
+  --amber: #f0c97c;
+  --amber-dim: rgba(240,201,124,0.12);
+  --blue: #7cb8f0;
+  --blue-dim: rgba(124,184,240,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* Grid noise overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(255,255,255,0.015) 24px, rgba(255,255,255,0.015) 25px),
+    repeating-linear-gradient(90deg, transparent, transparent 24px, rgba(255,255,255,0.015) 24px, rgba(255,255,255,0.015) 25px);
+  pointer-events: none; z-index: 0;
+}
+
+.app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+/* Header */
+header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--accent); letter-spacing: -0.5px; }
+.logo span { font-style: italic; font-weight: 300; color: var(--muted); font-size: 14px; display: block; margin-top: 2px; font-family: 'DM Sans', sans-serif; }
+.last-updated { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+
+/* KPI bar */
+.kpi-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-family: 'DM Mono', monospace; }
+.kpi-value { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--text); }
+.kpi-sub { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'DM Mono', monospace; }
+.kpi-value.positive { color: var(--accent); }
+.kpi-value.negative { color: var(--red); }
+
+/* Cash input */
+.cash-editor { background: var(--surface); border: 1px solid var(--accent); border-radius: 10px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
+.cash-editor label { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; font-family: 'DM Mono', monospace; white-space: nowrap; }
+.cash-editor input { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px; padding: 8px 12px; width: 140px; }
+.cash-editor input:focus { outline: none; border-color: var(--accent); }
+.cash-editor .thb-display { color: var(--muted); font-size: 13px; font-family: 'DM Mono', monospace; }
+.btn { background: var(--accent); color: #0e0f0e; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s; }
+.btn:hover { opacity: 0.85; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+.btn-ghost:hover { border-color: var(--text); color: var(--text); opacity: 1; }
+
+/* Main grid */
+.main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+
+/* Section */
+.section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.section-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.section-title { font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+
+/* Action panel */
+.action-panel { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; margin-bottom: 20px; }
+.action-panel .section-header { border-color: rgba(184,240,124,0.2); }
+.action-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--accent); padding: 16px 20px 4px; }
+.action-body { padding: 4px 20px 20px; color: var(--text); line-height: 1.7; font-size: 14px; }
+.action-body h3 { font-size: 13px; color: var(--muted); font-weight: 400; margin: 14px 0 4px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em; }
+.action-body p { color: var(--text); }
+.action-body .hold { color: var(--accent); font-weight: 500; }
+.action-body .sell { color: var(--red); font-weight: 500; }
+.action-body .buy { color: var(--blue); font-weight: 500; }
+
+/* Holdings table */
+table { width: 100%; border-collapse: collapse; }
+thead th { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 10px 20px; text-align: left; border-bottom: 1px solid var(--border); }
+tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface2); }
+tbody td { padding: 14px 20px; vertical-align: middle; }
+.ticker-cell { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--text); }
+.company-cell { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.weight-bar-wrap { display: flex; align-items: center; gap: 10px; }
+.weight-bar { height: 4px; background: var(--border); border-radius: 2px; flex: 1; min-width: 60px; }
+.weight-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+.weight-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* Status badges */
+.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+.badge-intact { background: var(--accent-dim); color: var(--accent); }
+.badge-evolving { background: var(--blue-dim); color: var(--blue); }
+.badge-at-risk { background: var(--amber-dim); color: var(--amber); }
+.badge-invalidated { background: var(--red-dim); color: var(--red); }
+.badge-review { background: var(--amber-dim); color: var(--amber); }
+.badge-generating { background: rgba(138,143,135,0.15); color: var(--muted); }
+
+/* Thesis drawer */
+.thesis-drawer { display: none; background: var(--surface2); border-top: 1px solid var(--border); padding: 20px; }
+.thesis-drawer.open { display: block; }
+.thesis-content { font-size: 13px; line-height: 1.7; color: var(--text); white-space: pre-wrap; font-family: 'DM Mono', monospace; }
+
+/* Watchlist */
+.watchlist-item { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.1s; }
+.watchlist-item:last-child { border-bottom: none; }
+.watchlist-item:hover { background: var(--surface2); }
+.wl-ticker { font-family: 'DM Mono', monospace; font-weight: 500; }
+.wl-reason { font-size: 12px; color: var(--muted); }
+.wl-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 4px; border-radius: 4px; }
+.wl-remove:hover { color: var(--red); background: var(--red-dim); }
+
+/* Add watchlist */
+.add-wl { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.add-wl input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; padding: 7px 10px; text-transform: uppercase; }
+.add-wl input:focus { outline: none; border-color: var(--accent); }
+
+/* Right panel sections */
+.right-panel .section { margin-bottom: 20px; }
+
+/* Philosophy */
+.philosophy-item { padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.philosophy-item:last-child { border-bottom: none; }
+.phil-label { font-size: 12px; color: var(--muted); }
+.phil-value { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text); }
+
+/* Loading */
+.loading { text-align: center; padding: 60px 20px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.dot { animation: blink 1.2s infinite; }
+.dot:nth-child(2) { animation-delay: 0.4s; }
+.dot:nth-child(3) { animation-delay: 0.8s; }
+@keyframes blink { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+/* Change indicator */
+.change-pos { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 12px; }
+.change-neg { color: var(--red); font-family: 'DM Mono', monospace; font-size: 12px; }
+.change-neu { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 12px; }
+
+@media (max-width: 768px) {
+  .kpi-bar { grid-template-columns: repeat(2, 1fr); }
+  .main-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div>
+      <div class="logo">Portfolio AI <span>Nick Sleep–style discipline</span></div>
+    </div>
+    <div class="last-updated" id="last-updated">Loading...</div>
+  </header>
+
+  <!-- Cash editor -->
+  <div class="cash-editor">
+    <label>💵 Cash available</label>
+    <input type="number" id="cash-input" placeholder="278" step="1">
+    <span class="thb-display" id="cash-thb">฿ —</span>
+    <button class="btn" onclick="saveCash()">Update</button>
+  </div>
+
+  <!-- KPI bar -->
+  <div class="kpi-bar">
+    <div class="kpi">
+      <div class="kpi-label">Portfolio NAV</div>
+      <div class="kpi-value" id="kpi-nav">—</div>
+      <div class="kpi-sub" id="kpi-nav-thb">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">vs S&P 500</div>
+      <div class="kpi-value" id="kpi-spy">—</div>
+      <div class="kpi-sub">since inception</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Holdings</div>
+      <div class="kpi-value" id="kpi-holdings">—</div>
+      <div class="kpi-sub" id="kpi-cash">cash: —</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Last action</div>
+      <div class="kpi-value" id="kpi-action" style="font-size:14px">—</div>
+      <div class="kpi-sub" id="kpi-action-date">—</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <!-- LEFT column -->
+    <div class="left-panel">
+
+      <!-- Action panel -->
+      <div class="action-panel">
+        <div class="section-header">
+          <span class="section-title">🎯 This week's recommendation</span>
+          <span class="last-updated" id="rec-date">—</span>
+        </div>
+        <div class="action-title" id="action-headline">Loading recommendation...</div>
+        <div class="action-body" id="action-body">
+          <div class="loading">Analyzing<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+        </div>
+      </div>
+
+      <!-- Holdings -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">📊 Holdings</span>
+          <span style="font-size:12px;color:var(--muted)">Click row for thesis</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Status</th>
+              <th>Weight</th>
+              <th>Change</th>
+            </tr>
+          </thead>
+          <tbody id="holdings-body">
+            <tr><td colspan="4" class="loading">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- RIGHT column -->
+    <div class="right-panel">
+
+      <!-- Watchlist -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">👁 Watchlist</span>
+        </div>
+        <div id="watchlist-items">
+          <div class="loading">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+        </div>
+        <div class="add-wl">
+          <input type="text" id="wl-input" placeholder="ADD TICKER" maxlength="6"
+            onkeydown="if(event.key==='Enter')addToWatchlist()">
+          <button class="btn btn-ghost" onclick="addToWatchlist()">+ Add</button>
+        </div>
+      </div>
+
+      <!-- Philosophy -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">📖 Philosophy</span>
+        </div>
+        <div id="philosophy-items">
+          <div class="philosophy-item"><span class="phil-label">Style</span><span class="phil-value">Quality Growth</span></div>
+          <div class="philosophy-item"><span class="phil-label">Min hold</span><span class="phil-value">6 months</span></div>
+          <div class="philosophy-item"><span class="phil-label">Max positions</span><span class="phil-value">10 stocks</span></div>
+          <div class="philosophy-item"><span class="phil-label">Max cash</span><span class="phil-value">40%</span></div>
+          <div class="philosophy-item"><span class="phil-label">Sell trigger</span><span class="phil-value">Data, not price</span></div>
+        </div>
+      </div>
+
+      <!-- Timezone info -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-title">🕐 Market hours (BKK)</span>
+        </div>
+        <div id="market-status" style="padding:14px 20px;">
+          <div class="philosophy-item" style="padding:6px 0;border:none">
+            <span class="phil-label">US Market open</span>
+            <span class="phil-value">20:30 น.</span>
+          </div>
+          <div class="philosophy-item" style="padding:6px 0;border:none">
+            <span class="phil-label">US Market close</span>
+            <span class="phil-value">03:00 น.</span>
+          </div>
+          <div class="philosophy-item" style="padding:6px 0;border:none">
+            <span class="phil-label">Pre-market scan</span>
+            <span class="phil-value">08:00 น.</span>
+          </div>
+          <div class="philosophy-item" style="padding:6px 0;border:none">
+            <span class="phil-label">Weekly review</span>
+            <span class="phil-value">เสาร์ 09:00 น.</span>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:var(--surface2);border-radius:8px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Bangkok time now</div>
+            <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--accent);margin-top:4px;" id="bkk-clock">—</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;" id="market-open-status">—</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const THB_RATE = 36;
+let portfolioData = null;
+
+// ── Data loading ─────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const res = await fetch('data/dashboard.json?t=' + Date.now());
+    if (!res.ok) throw new Error('No data yet');
+    portfolioData = await res.json();
+    renderAll();
+  } catch(e) {
+    // Show placeholder if no data yet
+    document.getElementById('action-headline').textContent = 'Awaiting first analysis run';
+    document.getElementById('action-body').innerHTML =
+      '<p style="color:var(--muted)">The AI will analyze your portfolio on the next scheduled run (Saturday 09:00 BKK or trigger manually via GitHub Actions).</p>';
+    document.getElementById('holdings-body').innerHTML =
+      '<tr><td colspan="4" style="padding:20px;color:var(--muted);font-family:DM Mono,monospace;text-align:center;">No data yet — run the workflow first</td></tr>';
+  }
+}
+
+function renderAll() {
+  if (!portfolioData) return;
+  renderKPIs();
+  renderRecommendation();
+  renderHoldings();
+  renderWatchlist();
+  document.getElementById('last-updated').textContent = portfolioData.last_updated_bkk || '—';
+  document.getElementById('cash-input').value = portfolioData.cash_usd || '';
+  updateCashDisplay(portfolioData.cash_usd || 0);
+}
+
+// ── KPIs ─────────────────────────────────────────────────────────────────
+function renderKPIs() {
+  const d = portfolioData;
+  const navUsd = d.nav_usd || 0;
+  const navThb = navUsd * THB_RATE;
+  document.getElementById('kpi-nav').textContent = `$${navUsd.toLocaleString('en', {minimumFractionDigits:0})}`;
+  document.getElementById('kpi-nav-thb').textContent = `฿${navThb.toLocaleString('th')}`;
+
+  const cashUsd = d.cash_usd || 0;
+  const cashPct = navUsd > 0 ? ((cashUsd / navUsd) * 100).toFixed(1) : 0;
+  document.getElementById('kpi-cash').textContent = `cash: ${cashPct}% ($${cashUsd})`;
+
+  const holdings = d.holdings || [];
+  document.getElementById('kpi-holdings').textContent = holdings.length;
+
+  document.getElementById('kpi-spy').textContent = '—';
+  document.getElementById('kpi-action').textContent = 'Hold all';
+  document.getElementById('kpi-action-date').textContent = 'No actions yet';
+}
+
+// ── Recommendation ────────────────────────────────────────────────────────
+function renderRecommendation() {
+  const rec = portfolioData.recommendation || '';
+  if (!rec) {
+    document.getElementById('action-headline').textContent = 'No recommendation yet';
+    document.getElementById('action-body').textContent = 'Run weekly analysis to get recommendations.';
+    return;
+  }
+
+  // Parse markdown-ish recommendation
+  const lines = rec.split('\n').filter(l => l.trim());
+  const headline = lines.find(l => l.startsWith('###'))?.replace(/###\s*/,'') || 'Weekly Recommendation';
+  document.getElementById('action-headline').textContent = headline;
+
+  // Color-code action words
+  let bodyHtml = rec
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+    .replace(/^##\s+(.+)$/gm, '<h3>$1</h3>')
+    .replace(/\n/g, '<br>');
+
+  // Highlight key words
+  bodyHtml = bodyHtml
+    .replace(/\bHOLD\b/g, '<span class="hold">HOLD</span>')
+    .replace(/\bSELL\b/g, '<span class="sell">SELL</span>')
+    .replace(/\bBUY\b/g, '<span class="buy">BUY</span>');
+
+  document.getElementById('action-body').innerHTML = bodyHtml;
+  document.getElementById('rec-date').textContent = portfolioData.last_updated_bkk || '—';
+}
+
+// ── Holdings ──────────────────────────────────────────────────────────────
+function renderHoldings() {
+  const holdings = portfolioData.holdings || [];
+  const tbody = document.getElementById('holdings-body');
+  tbody.innerHTML = '';
+
+  holdings.forEach((h, i) => {
+    const status = h.thesis_status || 'generating';
+    const badgeClass = {
+      intact: 'badge-intact', evolving: 'badge-evolving',
+      'at_risk': 'badge-at-risk', 'at-risk': 'badge-at-risk',
+      invalidated: 'badge-invalidated', review: 'badge-review',
+      generating: 'badge-generating'
+    }[status] || 'badge-generating';
+
+    const changePct = h.change_pct || 0;
+    const changeClass = changePct > 0 ? 'change-pos' : changePct < 0 ? 'change-neg' : 'change-neu';
+    const changeStr = changePct !== 0 ? `${changePct > 0 ? '+' : ''}${changePct.toFixed(1)}%` : '—';
+
+    const row = document.createElement('tr');
+    row.onclick = () => toggleThesis(i, h.ticker);
+    row.innerHTML = `
+      <td>
+        <div class="ticker-cell">${h.ticker}</div>
+        <div class="company-cell">${h.note || ''}</div>
+      </td>
+      <td><span class="badge ${badgeClass}">${status.replace('_',' ')}</span></td>
+      <td>
+        <div class="weight-bar-wrap">
+          <div class="weight-bar"><div class="weight-fill" style="width:${Math.min(h.weight_pct||0, 100)}%"></div></div>
+          <span class="weight-num">${(h.weight_pct||0).toFixed(1)}%</span>
+        </div>
+      </td>
+      <td><span class="${changeClass}">${changeStr}</span></td>
+    `;
+    tbody.appendChild(row);
+
+    // Thesis drawer
+    const drawer = document.createElement('tr');
+    drawer.innerHTML = `<td colspan="4" style="padding:0"><div class="thesis-drawer" id="thesis-${i}"><div class="thesis-content">${h.news_summary || 'Click to load thesis...'}</div></div></td>`;
+    tbody.appendChild(drawer);
+  });
+}
+
+function toggleThesis(i, ticker) {
+  const drawer = document.getElementById(`thesis-${i}`);
+  const isOpen = drawer.classList.contains('open');
+  document.querySelectorAll('.thesis-drawer.open').forEach(d => d.classList.remove('open'));
+  if (!isOpen) {
+    drawer.classList.add('open');
+    loadThesisFull(ticker, drawer.querySelector('.thesis-content'));
+  }
+}
+
+async function loadThesisFull(ticker, el) {
+  try {
+    const res = await fetch(`docs/thesis/${ticker}.md?t=${Date.now()}`);
+    if (res.ok) {
+      const text = await res.text();
+      el.textContent = text;
+    }
+  } catch(e) { /* keep existing content */ }
+}
+
+// ── Watchlist ─────────────────────────────────────────────────────────────
+function renderWatchlist() {
+  const wl = portfolioData.watchlist || [];
+  const container = document.getElementById('watchlist-items');
+  if (!wl.length) {
+    container.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center;font-size:13px;">No watchlist yet</div>';
+    return;
+  }
+  container.innerHTML = wl.map((w, i) => `
+    <div class="watchlist-item">
+      <div>
+        <div class="wl-ticker">${w.ticker}</div>
+        <div class="wl-reason">${w.reason || '—'}</div>
+      </div>
+      <button class="wl-remove" onclick="removeFromWatchlist(${i})" title="Remove">×</button>
+    </div>
+  `).join('');
+}
+
+async function addToWatchlist() {
+  const input = document.getElementById('wl-input');
+  const ticker = input.value.trim().toUpperCase();
+  if (!ticker || ticker.length < 1) return;
+
+  // Add to local data and save
+  if (!portfolioData) portfolioData = { watchlist: [] };
+  if (!portfolioData.watchlist) portfolioData.watchlist = [];
+
+  if (portfolioData.watchlist.find(w => w.ticker === ticker)) {
+    alert(`${ticker} is already in your watchlist`);
+    return;
+  }
+
+  portfolioData.watchlist.push({ ticker, reason: 'Added manually', added: new Date().toISOString().split('T')[0] });
+  input.value = '';
+  renderWatchlist();
+  saveLocalData();
+}
+
+function removeFromWatchlist(i) {
+  if (!portfolioData?.watchlist) return;
+  portfolioData.watchlist.splice(i, 1);
+  renderWatchlist();
+  saveLocalData();
+}
+
+// ── Cash ──────────────────────────────────────────────────────────────────
+function updateCashDisplay(usd) {
+  const thb = usd * THB_RATE;
+  document.getElementById('cash-thb').textContent = `฿${thb.toLocaleString('th', {maximumFractionDigits:0})}`;
+}
+
+document.getElementById('cash-input').addEventListener('input', function() {
+  updateCashDisplay(parseFloat(this.value) || 0);
+});
+
+function saveCash() {
+  const val = parseFloat(document.getElementById('cash-input').value) || 0;
+  if (portfolioData) {
+    portfolioData.cash_usd = val;
+    portfolioData.cash_thb = val * THB_RATE;
+  }
+  updateCashDisplay(val);
+  saveLocalData();
+  showToast(`Cash updated: $${val} (฿${(val*THB_RATE).toLocaleString('th',{maximumFractionDigits:0})})`);
+}
+
+// ── Local storage for user edits ──────────────────────────────────────────
+function saveLocalData() {
+  try {
+    localStorage.setItem('portfolio_overrides', JSON.stringify({
+      cash_usd: portfolioData?.cash_usd,
+      watchlist: portfolioData?.watchlist
+    }));
+  } catch(e) {}
+}
+
+function loadLocalOverrides() {
+  try {
+    const saved = localStorage.getItem('portfolio_overrides');
+    if (saved && portfolioData) {
+      const overrides = JSON.parse(saved);
+      if (overrides.cash_usd != null) {
+        portfolioData.cash_usd = overrides.cash_usd;
+        document.getElementById('cash-input').value = overrides.cash_usd;
+        updateCashDisplay(overrides.cash_usd);
+      }
+      if (overrides.watchlist) portfolioData.watchlist = overrides.watchlist;
+    }
+  } catch(e) {}
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--accent);color:#0e0f0e;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;animation:slideUp 0.2s ease';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ── Clock ─────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const bkkOffset = 7 * 60;
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const bkk = new Date(utc + bkkOffset * 60000);
+
+  const h = bkk.getHours().toString().padStart(2,'0');
+  const m = bkk.getMinutes().toString().padStart(2,'0');
+  document.getElementById('bkk-clock').textContent = `${h}:${m} น.`;
+
+  // Market status
+  const bkkH = bkk.getHours();
+  const bkkMin = bkk.getMinutes();
+  const totalMin = bkkH * 60 + bkkMin;
+  const isWeekday = bkk.getDay() >= 1 && bkk.getDay() <= 5;
+
+  let status = 'ตลาด US ปิด';
+  if (isWeekday && totalMin >= 20*60+30 && totalMin < 24*60) status = '🟢 ตลาด US เปิดอยู่';
+  else if (isWeekday && totalMin >= 0 && totalMin < 3*60) status = '🟢 ตลาด US เปิดอยู่';
+  else if (isWeekday && totalMin >= 20*60 && totalMin < 20*60+30) status = '🟡 Pre-market (เปิดอีก ' + (20*60+30 - totalMin) + ' นาที)';
+
+  document.getElementById('market-open-status').textContent = status;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+loadData().then(() => {
+  loadLocalOverrides();
+  renderWatchlist();
+});
+updateClock();
+setInterval(updateClock, 30000);
+setInterval(loadData, 5 * 60 * 1000); // refresh every 5min
+</script>
+</body>
+</html>

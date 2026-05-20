@@ -1,0 +1,13 @@
+{
+  "inception_date": "2026-05-21",
+  "inception_nav_usd": 3142,
+  "snapshots": [
+    {
+      "date": "2026-05-21",
+      "nav_usd": 3142,
+      "nav_thb": 113112,
+      "vs_spy_pp": 0,
+      "note": "Inception"
+    }
+  ]
+}

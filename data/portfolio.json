@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "currency": "USD",
+    "timezone": "Asia/Bangkok",
+    "last_updated": "2026-05-21",
+    "total_nav_usd": 3142
+  },
+  "cash": {
+    "usd": 278,
+    "thb": 10000,
+    "note": "Update this manually when you add/withdraw cash"
+  },
+  "holdings": [
+    {
+      "ticker": "AMZN",
+      "shares": null,
+      "weight_pct": 43.73,
+      "thesis_status": "generating",
+      "note": "AWS growth, advertising margin"
+    },
+    {
+      "ticker": "JEPQ",
+      "shares": null,
+      "weight_pct": 21.63,
+      "thesis_status": "review",
+      "note": "Income ETF - may not fit growth profile"
+    },
+    {
+      "ticker": "MSFT",
+      "shares": null,
+      "weight_pct": 16.49,
+      "thesis_status": "generating",
+      "note": "Copilot enterprise, Azure growth"
+    },
+    {
+      "ticker": "META",
+      "shares": null,
+      "weight_pct": 9.48,
+      "thesis_status": "generating",
+      "note": "Ad platform, AI efficiency"
+    },
+    {
+      "ticker": "VOO",
+      "shares": null,
+      "weight_pct": 5.86,
+      "thesis_status": "review",
+      "note": "ETF - overlaps with existing holdings"
+    },
+    {
+      "ticker": "IONQ",
+      "shares": null,
+      "weight_pct": 2.70,
+      "thesis_status": "review",
+      "note": "Speculative quantum - no strong thesis"
+    }
+  ],
+  "watchlist": [
+    {"ticker": "GOOGL", "reason": "AI full stack, TPU advantage"},
+    {"ticker": "NVDA", "reason": "AI infrastructure leader"},
+    {"ticker": "AVGO", "reason": "Networking switch moat"},
+    {"ticker": "AAPL", "reason": "Ecosystem lock-in"},
+    {"ticker": "NFLX", "reason": "Content moat, ad tier growth"},
+    {"ticker": "LLY", "reason": "GLP-1 monopoly potential"}
+  ],
+  "philosophy": {
+    "style": "Quality Growth",
+    "hold_min_months": 6,
+    "max_positions": 10,
+    "max_cash_pct": 40,
+    "min_cash_pct": 0,
+    "rebalance_trigger": "data_not_price",
+    "dividend_preference": "growth_over_income"
+  }
+}
