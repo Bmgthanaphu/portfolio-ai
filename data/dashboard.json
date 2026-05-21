@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-05-21T12:14:57.086112+07:00",
-  "last_updated_bkk": "21 May 2026, 12:14 น. (BKK)",
+  "last_updated": "2026-05-21T12:36:37.094548+07:00",
+  "last_updated_bkk": "21 May 2026, 12:36 น. (BKK)",
   "nav_usd": 3142,
   "nav_thb": 113112.0,
   "cash_usd": 278,
@@ -14,8 +14,8 @@
       "thesis_status": "intact",
       "note": "AWS growth, advertising margin",
       "news_summary": "Analysis error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
-      "price": 264.53,
-      "change_pct": 2.0
+      "price": 265.01,
+      "change_pct": 2.19
     },
     {
       "ticker": "JEPQ",
@@ -24,8 +24,8 @@
       "thesis_status": "intact",
       "note": "Income ETF - may not fit growth profile",
       "news_summary": "Analysis error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
-      "price": 59.969,
-      "change_pct": 0.62
+      "price": 59.98,
+      "change_pct": 0.64
     },
     {
       "ticker": "MSFT",
@@ -34,8 +34,8 @@
       "thesis_status": "intact",
       "note": "Copilot enterprise, Azure growth",
       "news_summary": "Analysis error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
-      "price": 420.79,
-      "change_pct": 0.81
+      "price": 421.06,
+      "change_pct": 0.87
     },
     {
       "ticker": "META",
@@ -44,8 +44,8 @@
       "thesis_status": "intact",
       "note": "Ad platform, AI efficiency",
       "news_summary": "Analysis error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
-      "price": 603.72,
-      "change_pct": 0.18
+      "price": 605.06,
+      "change_pct": 0.41
     },
     {
       "ticker": "VOO",
@@ -54,8 +54,8 @@
       "thesis_status": "intact",
       "note": "ETF - overlaps with existing holdings",
       "news_summary": "Analysis error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
-      "price": 681.44,
-      "change_pct": 1.02
+      "price": 681.57,
+      "change_pct": 1.03
     },
     {
       "ticker": "IONQ",
@@ -64,8 +64,8 @@
       "thesis_status": "intact",
       "note": "Speculative quantum - no strong thesis",
       "news_summary": "Analysis error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
-      "price": 52.43,
-      "change_pct": 8.24
+      "price": 52.47,
+      "change_pct": 8.32
     }
   ],
   "watchlist": [
@@ -94,7 +94,7 @@
       "reason": "GLP-1 monopoly potential"
     }
   ],
-  "recommendation": "",
+  "recommendation": "Error generating recommendation: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}",
   "philosophy": {
     "style": "Quality Growth",
     "hold_min_months": 6,
