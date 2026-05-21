@@ -21,11 +21,8 @@ TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "5731895043")
 THB_RATE = float(os.environ.get("THB_RATE", "36"))  # USD/THB rate
 
-client = genai.Client(
-    api_key=GEMINI_API_KEY,
-    http_options=types.HttpOptions(api_version="v1")
-) if GEMINI_API_KEY else None
-GEMINI_MODEL = "gemini-1.5-flash"
+client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+GEMINI_MODEL = "gemini-2.0-flash-lite"
 
 MODE = sys.argv[1] if len(sys.argv) > 1 else "scan"
 # Modes: scan | weekly | quarterly | earnings
