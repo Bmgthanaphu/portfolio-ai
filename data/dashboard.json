@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-05-21T13:14:09.946455+07:00",
-  "last_updated_bkk": "21 May 2026, 13:14 น. (BKK)",
+  "last_updated": "2026-05-21T13:25:43.327062+07:00",
+  "last_updated_bkk": "21 May 2026, 13:25 น. (BKK)",
   "nav_usd": 3142,
   "nav_thb": 113112.0,
   "cash_usd": 278,
@@ -11,9 +11,9 @@
       "ticker": "AMZN",
       "shares": null,
       "weight_pct": 43.73,
-      "thesis_status": "intact",
+      "thesis_status": "evolving",
       "note": "AWS growth, advertising margin",
-      "news_summary": "Analysis error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.0-flash-lite is no longer available to new users. Please update your code to use a newer model for the latest features and improvements.', 'status': 'NOT_FOUND'}}",
+      "news_summary": "Amazon's launch of 'Amazon Now' for ultra-fast delivery could enhance its competitive edge in e-commerce, but the ongoing tariff lawsuit raises potential legal and financial risks.",
       "price": 265.01,
       "change_pct": 2.19
     },
@@ -21,9 +21,9 @@
       "ticker": "JEPQ",
       "shares": null,
       "weight_pct": 21.63,
-      "thesis_status": "intact",
+      "thesis_status": "evolving",
       "note": "Income ETF - may not fit growth profile",
-      "news_summary": "Analysis error: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "news_summary": "Recent discussions highlight potential risks associated with JEPQ's yield and counterparty risk, suggesting that the fund may not be as straightforward as it appears for income-focused investors.",
       "price": 59.98,
       "change_pct": 0.64
     },
@@ -33,7 +33,7 @@
       "weight_pct": 16.49,
       "thesis_status": "intact",
       "note": "Copilot enterprise, Azure growth",
-      "news_summary": "Analysis error: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "news_summary": "Microsoft's commitment to carbon removal remains strong despite earlier concerns, which supports its sustainability initiatives and long-term growth prospects.",
       "price": 421.06,
       "change_pct": 0.87
     },
@@ -41,9 +41,9 @@
       "ticker": "META",
       "shares": null,
       "weight_pct": 9.48,
-      "thesis_status": "intact",
+      "thesis_status": "evolving",
       "note": "Ad platform, AI efficiency",
-      "news_summary": "Analysis error: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "news_summary": "Meta's recent layoffs and workforce restructuring towards AI indicate a shift in focus that could impact its growth trajectory, while the CEO's comments suggest uncertainty about future success.",
       "price": 605.06,
       "change_pct": 0.41
     },
@@ -53,7 +53,7 @@
       "weight_pct": 5.86,
       "thesis_status": "intact",
       "note": "ETF - overlaps with existing holdings",
-      "news_summary": "Analysis error: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "news_summary": "Recent discussions highlight VOO's strong positioning among popular index funds, with notable endorsements from financial influencers. However, competition from other ETFs like IVV and international funds is increasing.",
       "price": 681.57,
       "change_pct": 1.03
     },
@@ -61,9 +61,9 @@
       "ticker": "IONQ",
       "shares": null,
       "weight_pct": 2.7,
-      "thesis_status": "intact",
+      "thesis_status": "evolving",
       "note": "Speculative quantum - no strong thesis",
-      "news_summary": "Analysis error: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+      "news_summary": "IonQ's stock has experienced volatility recently, with a notable drop alongside other quantum stocks, indicating potential profit-taking and market sentiment shifts. Additionally, the merger with SkyWater Technology raises questions about valuation and investor confidence.",
       "price": 52.47,
       "change_pct": 8.32
     }
@@ -94,7 +94,7 @@
       "reason": "GLP-1 monopoly potential"
     }
   ],
-  "recommendation": "Error generating recommendation: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ', 'status': 'RESOURCE_EXHAUSTED'}}",
+  "recommendation": "## Weekly Recommendation — 21 May 2026\n\n### Action this week\n[HOLD ALL]\n\n### Holdings status\n- **AMZN: EVOLVING** - Amazon's competitive edge may improve with 'Amazon Now', but legal risks remain a concern.\n- **JEPQ: EVOLVING** - Ongoing discussions about yield and counterparty risks suggest caution for income-focused investors.\n- **MSFT: INTACT** - Strong commitment to sustainability and carbon removal supports long-term growth prospects.\n- **META: EVOLVING** - Workforce restructuring towards AI indicates a shift, but uncertainty about future success persists.\n- **VOO: INTACT** - Strong positioning among popular index funds, though competition is increasing.\n- **IONQ: EVOLVING** - Recent volatility and merger concerns may affect investor confidence.\n\n### Cash strategy\n[Wait] - With $278.00 (฿10,008) available, it’s prudent to hold cash for potential opportunities rather than deploying it now, given the evolving status of current holdings.\n\n### Watchlist trigger\n**GOOGL** is the closest to buy. Confirmation is needed on its AI advancements and market positioning, particularly how it leverages its TPU advantage in upcoming earnings.\n\n### This week's key events to watch\n- Earnings reports from major tech companies, especially those in the watchlist like GOOGL and NVDA.\n- Any updates on macroeconomic indicators that may influence tech stock performance, particularly inflation and interest rate discussions.",
   "philosophy": {
     "style": "Quality Growth",
     "hold_min_months": 6,
