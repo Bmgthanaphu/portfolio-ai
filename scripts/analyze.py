@@ -687,14 +687,25 @@ def run_weekly():
         holdings_analysis.append(holding)
         time.sleep(2)
 
-    # ── AI paper trading — ประกาศก่อน execute ตอนตลาดเปิด ──
-    decisions = ai_make_trading_decision(ai_portfolio, holdings_analysis,
-                                         portfolio.get("watchlist", []))
-    for d in decisions:
-        ai_portfolio = announce_ai_pending_decision(ai_portfolio, d)
-        time.sleep(1)
+    # ── AI paper trading — เฉพาะเสาร์ + ไม่มี pending ค้างอยู่ ──
+    has_pending = bool(ai_portfolio.get("pending_decisions"))
+    if has_pending:
+        print(f"  AI มี {len(ai_portfolio['pending_decisions'])} pending decisions อยู่ — ข้ามการตัดสินใจใหม่")
+        send_telegram(
+            f"⏳ *AI Portfolio — รอ execute pending*\n\n"
+            f"มีคำสั่งค้างอยู่ {len(ai_portfolio['pending_decisions'])} รายการ "
+            f"รอตลาดเปิด 20:30 น."
+        )
+    else:
+        decisions = ai_make_trading_decision(ai_portfolio, holdings_analysis,
+                                             portfolio.get("watchlist", []))
+        for d in decisions:
+            ai_portfolio = announce_ai_pending_decision(ai_portfolio, d)
+            time.sleep(1)
+        if not decisions:
+            print("  AI ตัดสินใจ: ไม่ทำอะไรสัปดาห์นี้")
 
-    # ถ้าตลาดเปิดอยู่แล้ว execute ทันที
+    # execute ถ้าตลาดเปิดอยู่แล้ว
     if is_market_open() and ai_portfolio.get("pending_decisions"):
         ai_portfolio, _ = execute_pending_decisions(ai_portfolio)
 

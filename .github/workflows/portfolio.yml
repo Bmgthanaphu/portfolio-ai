@@ -59,9 +59,8 @@ jobs:
             HOUR=$(date -u +%H)
             DAY=$(date -u +%u)  # 1=Mon, 7=Sun
             
+            # weekly = เสาร์เท่านั้น | weekday ทุก run เป็น scan
             if [ "$DAY" = "6" ] && [ "$HOUR" = "02" ]; then
-              echo "mode=weekly" >> $GITHUB_OUTPUT
-            elif [ "$HOUR" = "13" ] || [ "$HOUR" = "01" ] || [ "$HOUR" = "20" ]; then
               echo "mode=weekly" >> $GITHUB_OUTPUT
             else
               echo "mode=scan" >> $GITHUB_OUTPUT
