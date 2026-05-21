@@ -1,73 +1,139 @@
 {
-  "last_updated": "2026-05-21T13:38:22.242993+07:00",
-  "last_updated_bkk": "21 May 2026, 13:38 น. (BKK)",
-  "nav_usd": 3142,
-  "nav_thb": 113112.0,
-  "cash_usd": 278,
-  "cash_thb": 10000,
+  "last_updated": "2026-05-21T14:13:42.293929+07:00",
+  "last_updated_bkk": "21 May 2026, 14:13 น. (BKK)",
   "spy_price": 741.25,
-  "holdings": [
-    {
-      "ticker": "AMZN",
-      "shares": null,
-      "weight_pct": 43.73,
-      "thesis_status": "evolving",
-      "note": "AWS growth, advertising margin",
-      "news_summary": "Amazon's launch of 'Amazon Now' for ultra-fast delivery could enhance its competitive edge in e-commerce, but the ongoing tariff lawsuit raises potential legal and financial risks.",
-      "price": 265.01,
-      "change_pct": 2.19
-    },
-    {
-      "ticker": "JEPQ",
-      "shares": null,
-      "weight_pct": 21.63,
-      "thesis_status": "evolving",
-      "note": "Income ETF - may not fit growth profile",
-      "news_summary": "Recent discussions highlight potential risks associated with JEPQ's yield and counterparty risk, suggesting that the fund may not be as straightforward as it appears for income-focused investors.",
-      "price": 59.98,
-      "change_pct": 0.64
-    },
-    {
-      "ticker": "MSFT",
-      "shares": null,
-      "weight_pct": 16.49,
-      "thesis_status": "intact",
-      "note": "Copilot enterprise, Azure growth",
-      "news_summary": "Microsoft's commitment to carbon removal remains strong despite earlier concerns, which supports its sustainability initiatives and long-term growth prospects.",
-      "price": 421.06,
-      "change_pct": 0.87
-    },
-    {
-      "ticker": "META",
-      "shares": null,
-      "weight_pct": 9.48,
-      "thesis_status": "evolving",
-      "note": "Ad platform, AI efficiency",
-      "news_summary": "Meta's recent layoffs and workforce restructuring towards AI indicate a shift in focus that could impact its growth trajectory, while the CEO's comments suggest uncertainty about future success.",
-      "price": 605.06,
-      "change_pct": 0.41
-    },
-    {
-      "ticker": "VOO",
-      "shares": null,
-      "weight_pct": 5.86,
-      "thesis_status": "intact",
-      "note": "ETF - overlaps with existing holdings",
-      "news_summary": "Recent discussions highlight VOO's strong positioning among popular index funds, with notable endorsements from financial influencers. However, competition from other ETFs like IVV and international funds is increasing.",
-      "price": 681.57,
-      "change_pct": 1.03
-    },
-    {
-      "ticker": "IONQ",
-      "shares": null,
-      "weight_pct": 2.7,
-      "thesis_status": "evolving",
-      "note": "Speculative quantum - no strong thesis",
-      "news_summary": "IonQ's stock has experienced volatility recently, with a notable drop alongside other quantum stocks, indicating potential profit-taking and market sentiment shifts. Additionally, the merger with SkyWater Technology raises questions about valuation and investor confidence.",
-      "price": 52.47,
-      "change_pct": 8.32
-    }
-  ],
+  "next_scan_bkk": "14:00 น. (BKK)",
+  "my": {
+    "nav_usd": 3142,
+    "nav_thb": 113112.0,
+    "cash_usd": 278,
+    "cash_thb": 10000,
+    "holdings": [
+      {
+        "ticker": "AMZN",
+        "shares": null,
+        "weight_pct": 43.73,
+        "thesis_status": "evolving",
+        "note": "AWS growth, advertising margin",
+        "news_summary": "Amazon ได้เปิดตัวบริการจัดส่งสินค้าภายใน 30 นาที ซึ่งอาจส่งผลกระทบต่อการดำเนินงานและผลกำไรในอนาคต ขณะเดียวกันก็มีการฟ้องร้องเกี่ยวกับการเรียกเก็บภาษีที่ไม่ถูกต้อง",
+        "price": 265.01,
+        "change_pct": 2.19
+      },
+      {
+        "ticker": "JEPQ",
+        "shares": null,
+        "weight_pct": 21.63,
+        "thesis_status": "evolving",
+        "note": "Income ETF - may not fit growth profile",
+        "news_summary": "ข่าวล่าสุดเกี่ยวกับ JEPQ แสดงให้เห็นถึงความเสี่ยงที่ซ่อนอยู่จากการลงทุนใน ETF นี้ โดยเฉพาะความเสี่ยงจากคู่สัญญา ELN ที่อาจส่งผลกระทบต่อผลตอบแทนที่นักลงทุนคาดหวัง.",
+        "price": 59.98,
+        "change_pct": 0.64
+      },
+      {
+        "ticker": "MSFT",
+        "shares": null,
+        "weight_pct": 16.49,
+        "thesis_status": "intact",
+        "note": "Copilot enterprise, Azure growth",
+        "news_summary": "ข่าวล่าสุดเกี่ยวกับ Microsoft แสดงให้เห็นถึงการเติบโตในตลาดคลาวด์และความหลากหลายของรายได้ ซึ่งยังคงสนับสนุนความเชื่อมั่นในหุ้น MSFT.",
+        "price": 421.06,
+        "change_pct": 0.87
+      },
+      {
+        "ticker": "META",
+        "shares": null,
+        "weight_pct": 9.48,
+        "thesis_status": "evolving",
+        "note": "Ad platform, AI efficiency",
+        "news_summary": "META กำลังเผชิญกับการปรับโครงสร้างองค์กรครั้งใหญ่ โดยมีการเลิกจ้างพนักงานจำนวนมากและเปลี่ยนทิศทางการลงทุนไปที่เทคโนโลยี AI ซึ่งอาจส่งผลต่อการเติบโตในอนาคต",
+        "price": 605.06,
+        "change_pct": 0.41
+      },
+      {
+        "ticker": "VOO",
+        "shares": null,
+        "weight_pct": 5.86,
+        "thesis_status": "intact",
+        "note": "ETF - overlaps with existing holdings",
+        "news_summary": "ข่าวล่าสุดแสดงให้เห็นถึงการสนับสนุนจากนักลงทุนที่มีชื่อเสียงสำหรับ VOO และการเปรียบเทียบผลตอบแทนกับ ETF อื่น ๆ ที่มีความคล้ายคลึงกัน ซึ่งยังคงสนับสนุนแนวทางการลงทุนใน VOO.",
+        "price": 681.57,
+        "change_pct": 1.03
+      },
+      {
+        "ticker": "IONQ",
+        "shares": null,
+        "weight_pct": 2.7,
+        "thesis_status": "evolving",
+        "note": "Speculative quantum - no strong thesis",
+        "news_summary": "IONQ ยังคงมีความแข็งแกร่งในตลาดควอนตัมคอมพิวติ้ง แต่มีความผันผวนในราคาหุ้นและข่าวที่เกี่ยวข้องกับคู่แข่งที่มีการเติบโตอย่างรวดเร็ว.",
+        "price": 52.47,
+        "change_pct": 8.32
+      }
+    ],
+    "recommendation": "## คำแนะนำสัปดาห์นี้ — 21 May 2026\n\n### การตัดสินใจ\n[HOLD ทั้งหมด]\n\n### สถานะ Holdings\n- AMZN: EVOLVING - มีการเปิดตัวบริการใหม่ที่อาจส่งผลต่อผลกำไรในอนาคต\n- JEPQ: EVOLVING - มีความเสี่ยงจากคู่สัญญา ELN ที่อาจกระทบผลตอบแทน\n- MSFT: INTACT - การเติบโตในตลาดคลาวด์ยังคงสนับสนุนความเชื่อมั่น\n- META: EVOLVING - การปรับโครงสร้างองค์กรอาจส่งผลต่อการเติบโต\n- VOO: INTACT - ได้รับการสนับสนุนจากนักลงทุนที่มีชื่อเสียง\n- IONQ: EVOLVING - มีความแข็งแกร่งในตลาดควอนตัมคอมพิวติ้งแต่ราคาหุ้นผันผวน\n\n### กลยุทธ์เงินสด\n[เก็บเงินสด $278.00 (฿10,008) ไว้เพื่อรอซื้อหุ้นที่มีศักยภาพในอนาคต]\n\n### Watchlist — ใกล้ซื้อแล้วไหม\n[GOOGL ใกล้ที่สุด ต้องรอข้อมูลเพิ่มเติมเกี่ยวกับการพัฒนา AI และความได้เปรียบด้าน TPU]\n\n### เหตุการณ์สำคัญสัปดาห์นี้\n[ติดตามผลประกอบการของบริษัทในพอร์ตและการประชุมของ Fed ที่อาจมีผลกระทบต่อแนวโน้มตลาด]"
+  },
+  "ai": {
+    "nav_usd": 3142,
+    "cash_usd": 799.5720000000001,
+    "holdings": [
+      {
+        "ticker": "AMZN",
+        "weight_pct": 43.73,
+        "cost_basis_usd": null,
+        "note": "AWS growth, advertising margin"
+      },
+      {
+        "ticker": "MSFT",
+        "weight_pct": 16.49,
+        "cost_basis_usd": null,
+        "note": "Copilot enterprise, Azure growth"
+      },
+      {
+        "ticker": "META",
+        "weight_pct": 9.48,
+        "cost_basis_usd": null,
+        "note": "Ad platform, AI efficiency"
+      },
+      {
+        "ticker": "VOO",
+        "weight_pct": 5.86,
+        "cost_basis_usd": null,
+        "note": "ETF - overlaps with existing holdings"
+      },
+      {
+        "ticker": "IONQ",
+        "weight_pct": 2.7,
+        "cost_basis_usd": null,
+        "note": "Speculative quantum - no strong thesis"
+      },
+      {
+        "ticker": "GOOGL",
+        "weight_pct": 5,
+        "cost_basis_usd": 388.91,
+        "note": "GOOGL มีความได้เปรียบด้าน AI และ TPU ซึ่งสามารถช่วยให้บริษัทเติบโตได้อย่างต่อเนื่องในอนาคต การลงทุนในหุ้นนี้จะช่วยกระจายความเสี่ยงและเพิ่มโอกาสในการเติบโต."
+      }
+    ],
+    "recent_decisions": [
+      {
+        "date": "2026-05-21 14:13",
+        "action": "SELL",
+        "ticker": "JEPQ",
+        "price": 59.98,
+        "usd": 678.6720000000001,
+        "reason": "ความเสี่ยงที่ซ่อนอยู่จากการลงทุนใน ETF นี้ โดยเฉพาะความเสี่ยงจากคู่สัญญา ELN ที่อาจส่งผลกระทบต่อผลตอบแทนที่นักลงทุนคาดหวัง ทำให้การถือหุ้นนี้มีความเสี่ยงสูงเกินไปในสถานการณ์ปัจจุบัน.",
+        "urgency": "today"
+      },
+      {
+        "date": "2026-05-21 14:13",
+        "action": "BUY",
+        "ticker": "GOOGL",
+        "price": 388.91,
+        "usd": 157.1,
+        "reason": "GOOGL มีความได้เปรียบด้าน AI และ TPU ซึ่งสามารถช่วยให้บริษัทเติบโตได้อย่างต่อเนื่องในอนาคต การลงทุนในหุ้นนี้จะช่วยกระจายความเสี่ยงและเพิ่มโอกาสในการเติบโต.",
+        "urgency": "this_week"
+      }
+    ]
+  },
   "watchlist": [
     {
       "ticker": "GOOGL",
@@ -94,7 +160,29 @@
       "reason": "GLP-1 monopoly potential"
     }
   ],
-  "recommendation": "",
+  "ai_suggested": [
+    {
+      "ticker": "CRM",
+      "name": "Salesforce, Inc.",
+      "thesis_short": "Salesforce มีโมเดลธุรกิจที่แข็งแกร่งในด้านการจัดการลูกค้าสัมพันธ์ (CRM) และมีการเติบโตอย่างต่อเนื่องจากการขยายบริการคลาวด์และ AI ในองค์กร ทำให้มีศักยภาพในการเติบโตในระยะยาวได้ดี",
+      "kill_condition": "การลดลงของการใช้จ่ายด้านเทคโนโลยีในองค์กรหรือการเกิดการแข่งขันที่รุนแรงจากคู่แข่ง",
+      "priority": "high"
+    },
+    {
+      "ticker": "ADBE",
+      "name": "Adobe Inc.",
+      "thesis_short": "Adobe มีผลิตภัณฑ์ที่เป็นที่นิยมในตลาดสร้างสรรค์และการตลาดดิจิทัล โดยเฉพาะ Creative Cloud ที่มีการเติบโตอย่างต่อเนื่องและมีการขยายเข้าสู่ AI และการวิเคราะห์ข้อมูล ทำให้มีโอกาสเติบโตในอนาคต",
+      "kill_condition": "การเปลี่ยนแปลงในแนวโน้มการใช้ซอฟต์แวร์หรือการเกิดคู่แข่งใหม่ที่มีนวัตกรรมดีกว่า",
+      "priority": "medium"
+    },
+    {
+      "ticker": "NOW",
+      "name": "ServiceNow, Inc.",
+      "thesis_short": "ServiceNow มีโมเดลธุรกิจที่แข็งแกร่งในด้านการจัดการบริการไอทีและการดำเนินงานในองค์กร โดยมีการเติบโตที่สูงจากการขยายตลาดและการนำเสนอผลิตภัณฑ์ใหม่ที่ตอบโจทย์ความต้องการของลูกค้า",
+      "kill_condition": "การลดลงของความต้องการในการจัดการบริการไอทีหรือการเกิดคู่แข่งที่มีเทคโนโลยีที่ดีกว่า",
+      "priority": "medium"
+    }
+  ],
   "philosophy": {
     "style": "Quality Growth",
     "hold_min_months": 6,
@@ -103,5 +191,14 @@
     "min_cash_pct": 0,
     "rebalance_trigger": "data_not_price",
     "dividend_preference": "growth_over_income"
-  }
+  },
+  "nav_history": [
+    {
+      "date": "2026-05-21",
+      "nav_usd": 3142,
+      "nav_thb": 113112,
+      "vs_spy_pp": 0,
+      "note": "Inception"
+    }
+  ]
 }

@@ -17,7 +17,7 @@
       "weight_pct": 43.73,
       "thesis_status": "evolving",
       "note": "AWS growth, advertising margin",
-      "news_summary": "Amazon's launch of 'Amazon Now' for ultra-fast delivery could enhance its competitive edge in e-commerce, but the ongoing tariff lawsuit raises potential legal and financial risks.",
+      "news_summary": "Amazon ได้เปิดตัวบริการจัดส่งสินค้าภายใน 30 นาที ซึ่งอาจส่งผลกระทบต่อการดำเนินงานและผลกำไรในอนาคต ขณะเดียวกันก็มีการฟ้องร้องเกี่ยวกับการเรียกเก็บภาษีที่ไม่ถูกต้อง",
       "price": 265.01,
       "change_pct": 2.19
     },
@@ -27,7 +27,7 @@
       "weight_pct": 21.63,
       "thesis_status": "evolving",
       "note": "Income ETF - may not fit growth profile",
-      "news_summary": "Recent discussions highlight potential risks associated with JEPQ's yield and counterparty risk, suggesting that the fund may not be as straightforward as it appears for income-focused investors.",
+      "news_summary": "ข่าวล่าสุดเกี่ยวกับ JEPQ แสดงให้เห็นถึงความเสี่ยงที่ซ่อนอยู่จากการลงทุนใน ETF นี้ โดยเฉพาะความเสี่ยงจากคู่สัญญา ELN ที่อาจส่งผลกระทบต่อผลตอบแทนที่นักลงทุนคาดหวัง.",
       "price": 59.98,
       "change_pct": 0.64
     },
@@ -37,7 +37,7 @@
       "weight_pct": 16.49,
       "thesis_status": "intact",
       "note": "Copilot enterprise, Azure growth",
-      "news_summary": "Microsoft's commitment to carbon removal remains strong despite earlier concerns, which supports its sustainability initiatives and long-term growth prospects.",
+      "news_summary": "ข่าวล่าสุดเกี่ยวกับ Microsoft แสดงให้เห็นถึงการเติบโตในตลาดคลาวด์และความหลากหลายของรายได้ ซึ่งยังคงสนับสนุนความเชื่อมั่นในหุ้น MSFT.",
       "price": 421.06,
       "change_pct": 0.87
     },
@@ -47,7 +47,7 @@
       "weight_pct": 9.48,
       "thesis_status": "evolving",
       "note": "Ad platform, AI efficiency",
-      "news_summary": "Meta's recent layoffs and workforce restructuring towards AI indicate a shift in focus that could impact its growth trajectory, while the CEO's comments suggest uncertainty about future success.",
+      "news_summary": "META กำลังเผชิญกับการปรับโครงสร้างองค์กรครั้งใหญ่ โดยมีการเลิกจ้างพนักงานจำนวนมากและเปลี่ยนทิศทางการลงทุนไปที่เทคโนโลยี AI ซึ่งอาจส่งผลต่อการเติบโตในอนาคต",
       "price": 605.06,
       "change_pct": 0.41
     },
@@ -57,7 +57,7 @@
       "weight_pct": 5.86,
       "thesis_status": "intact",
       "note": "ETF - overlaps with existing holdings",
-      "news_summary": "Recent discussions highlight VOO's strong positioning among popular index funds, with notable endorsements from financial influencers. However, competition from other ETFs like IVV and international funds is increasing.",
+      "news_summary": "ข่าวล่าสุดแสดงให้เห็นถึงการสนับสนุนจากนักลงทุนที่มีชื่อเสียงสำหรับ VOO และการเปรียบเทียบผลตอบแทนกับ ETF อื่น ๆ ที่มีความคล้ายคลึงกัน ซึ่งยังคงสนับสนุนแนวทางการลงทุนใน VOO.",
       "price": 681.57,
       "change_pct": 1.03
     },
@@ -67,7 +67,7 @@
       "weight_pct": 2.7,
       "thesis_status": "evolving",
       "note": "Speculative quantum - no strong thesis",
-      "news_summary": "IonQ's stock has experienced volatility recently, with a notable drop alongside other quantum stocks, indicating potential profit-taking and market sentiment shifts. Additionally, the merger with SkyWater Technology raises questions about valuation and investor confidence.",
+      "news_summary": "IONQ ยังคงมีความแข็งแกร่งในตลาดควอนตัมคอมพิวติ้ง แต่มีความผันผวนในราคาหุ้นและข่าวที่เกี่ยวข้องกับคู่แข่งที่มีการเติบโตอย่างรวดเร็ว.",
       "price": 52.47,
       "change_pct": 8.32
     }

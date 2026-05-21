@@ -5,14 +5,63 @@
     "last_updated": "2026-05-21"
   },
   "nav_approx_usd": 3142,
-  "cash_usd": 278,
+  "cash_usd": 799.5720000000001,
   "holdings": [
-    {"ticker": "AMZN", "weight_pct": 43.73, "cost_basis_usd": null, "note": "AWS growth, advertising margin"},
-    {"ticker": "JEPQ", "weight_pct": 21.63, "cost_basis_usd": null, "note": "Income ETF - may not fit growth profile"},
-    {"ticker": "MSFT", "weight_pct": 16.49, "cost_basis_usd": null, "note": "Copilot enterprise, Azure growth"},
-    {"ticker": "META", "weight_pct": 9.48,  "cost_basis_usd": null, "note": "Ad platform, AI efficiency"},
-    {"ticker": "VOO",  "weight_pct": 5.86,  "cost_basis_usd": null, "note": "ETF - overlaps with existing holdings"},
-    {"ticker": "IONQ", "weight_pct": 2.70,  "cost_basis_usd": null, "note": "Speculative quantum - no strong thesis"}
+    {
+      "ticker": "AMZN",
+      "weight_pct": 43.73,
+      "cost_basis_usd": null,
+      "note": "AWS growth, advertising margin"
+    },
+    {
+      "ticker": "MSFT",
+      "weight_pct": 16.49,
+      "cost_basis_usd": null,
+      "note": "Copilot enterprise, Azure growth"
+    },
+    {
+      "ticker": "META",
+      "weight_pct": 9.48,
+      "cost_basis_usd": null,
+      "note": "Ad platform, AI efficiency"
+    },
+    {
+      "ticker": "VOO",
+      "weight_pct": 5.86,
+      "cost_basis_usd": null,
+      "note": "ETF - overlaps with existing holdings"
+    },
+    {
+      "ticker": "IONQ",
+      "weight_pct": 2.7,
+      "cost_basis_usd": null,
+      "note": "Speculative quantum - no strong thesis"
+    },
+    {
+      "ticker": "GOOGL",
+      "weight_pct": 5,
+      "cost_basis_usd": 388.91,
+      "note": "GOOGL มีความได้เปรียบด้าน AI และ TPU ซึ่งสามารถช่วยให้บริษัทเติบโตได้อย่างต่อเนื่องในอนาคต การลงทุนในหุ้นนี้จะช่วยกระจายความเสี่ยงและเพิ่มโอกาสในการเติบโต."
+    }
   ],
-  "decisions": []
+  "decisions": [
+    {
+      "date": "2026-05-21 14:13",
+      "action": "SELL",
+      "ticker": "JEPQ",
+      "price": 59.98,
+      "usd": 678.6720000000001,
+      "reason": "ความเสี่ยงที่ซ่อนอยู่จากการลงทุนใน ETF นี้ โดยเฉพาะความเสี่ยงจากคู่สัญญา ELN ที่อาจส่งผลกระทบต่อผลตอบแทนที่นักลงทุนคาดหวัง ทำให้การถือหุ้นนี้มีความเสี่ยงสูงเกินไปในสถานการณ์ปัจจุบัน.",
+      "urgency": "today"
+    },
+    {
+      "date": "2026-05-21 14:13",
+      "action": "BUY",
+      "ticker": "GOOGL",
+      "price": 388.91,
+      "usd": 157.1,
+      "reason": "GOOGL มีความได้เปรียบด้าน AI และ TPU ซึ่งสามารถช่วยให้บริษัทเติบโตได้อย่างต่อเนื่องในอนาคต การลงทุนในหุ้นนี้จะช่วยกระจายความเสี่ยงและเพิ่มโอกาสในการเติบโต.",
+      "urgency": "this_week"
+    }
+  ]
 }
