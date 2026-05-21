@@ -347,8 +347,8 @@ def run_weekly():
         news = get_news(ticker)
         thesis = load_thesis(ticker)
 
-        # Generate thesis if none exists
-        if not thesis:
+        # Generate thesis if none exists or if previous attempt failed
+        if not thesis or "Error generating thesis" in thesis:
             print(f"  Generating thesis for {ticker}...")
             thesis = generate_thesis(ticker, price_data)
             save_thesis(ticker, thesis)
