@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-05-21T13:25:43.327062+07:00",
-  "last_updated_bkk": "21 May 2026, 13:25 น. (BKK)",
+  "last_updated": "2026-05-21T13:38:22.242993+07:00",
+  "last_updated_bkk": "21 May 2026, 13:38 น. (BKK)",
   "nav_usd": 3142,
   "nav_thb": 113112.0,
   "cash_usd": 278,
@@ -94,7 +94,7 @@
       "reason": "GLP-1 monopoly potential"
     }
   ],
-  "recommendation": "## Weekly Recommendation — 21 May 2026\n\n### Action this week\n[HOLD ALL]\n\n### Holdings status\n- **AMZN: EVOLVING** - Amazon's competitive edge may improve with 'Amazon Now', but legal risks remain a concern.\n- **JEPQ: EVOLVING** - Ongoing discussions about yield and counterparty risks suggest caution for income-focused investors.\n- **MSFT: INTACT** - Strong commitment to sustainability and carbon removal supports long-term growth prospects.\n- **META: EVOLVING** - Workforce restructuring towards AI indicates a shift, but uncertainty about future success persists.\n- **VOO: INTACT** - Strong positioning among popular index funds, though competition is increasing.\n- **IONQ: EVOLVING** - Recent volatility and merger concerns may affect investor confidence.\n\n### Cash strategy\n[Wait] - With $278.00 (฿10,008) available, it’s prudent to hold cash for potential opportunities rather than deploying it now, given the evolving status of current holdings.\n\n### Watchlist trigger\n**GOOGL** is the closest to buy. Confirmation is needed on its AI advancements and market positioning, particularly how it leverages its TPU advantage in upcoming earnings.\n\n### This week's key events to watch\n- Earnings reports from major tech companies, especially those in the watchlist like GOOGL and NVDA.\n- Any updates on macroeconomic indicators that may influence tech stock performance, particularly inflation and interest rate discussions.",
+  "recommendation": "",
   "philosophy": {
     "style": "Quality Growth",
     "hold_min_months": 6,
