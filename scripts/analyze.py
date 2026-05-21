@@ -319,12 +319,14 @@ Watchlist:
 
 
 def ai_make_trading_decision(ai_portfolio: dict, holdings_analysis: list, watchlist: list) -> list:
-    """AI ตัดสินใจซื้อ/ขายใน paper portfolio"""
+    """AI ตัดสินใจซื้อ/ขายใน paper portfolio — เน้น patience สูง"""
     if not OPENAI_API_KEY:
         return []
 
     now      = bangkok_now()
     cash_usd = ai_portfolio.get("cash_usd", 0)
+    nav      = ai_portfolio.get("nav_approx_usd", 3142)
+    cash_pct = (cash_usd / nav * 100) if nav else 0
 
     holdings_text  = "\n".join([
         f"- {h['ticker']}: {h.get('weight_pct',0):.1f}% | {h.get('thesis_status','?')} | {h.get('news_summary','')}"
@@ -333,34 +335,44 @@ def ai_make_trading_decision(ai_portfolio: dict, holdings_analysis: list, watchl
 
     prompt = f"""{THAI}
 
-คุณคือ AI fund manager ดูแลพอร์ต paper trading สไตล์ Nick Sleep
-วันที่: {now.strftime('%Y-%m-%d %H:%M')} เวลาไทย
-เงินสด: {usd_thb(cash_usd)}
-Philosophy: quality growth min hold 6 เดือน max 10 positions max cash 40%
+คุณคือ AI fund manager สไตล์ Nick Sleep — อดทน เฉียบขาด เทรดน้อยแต่แม่นยำ
 
-Holdings ปัจจุบัน:
+วันที่: {now.strftime('%Y-%m-%d')} | เงินสด: {usd_thb(cash_usd)} ({cash_pct:.1f}% ของพอร์ต)
+
+Holdings:
 {holdings_text}
 
 Watchlist:
 {watchlist_text}
 
-ตัดสินใจว่าจะซื้อหรือขายอะไรไหม ตอบเป็น JSON array เท่านั้น (ไม่มี ```):
+หลักการ:
+- คำตอบที่ถูกต้องที่สุดคือ "ไม่ทำอะไร" ถ้าไม่มีโอกาสชัดเจน
+- ขายได้โดยไม่ต้องซื้อตัวใหม่ — เก็บเป็นเงินสดก็ดี
+- ซื้อได้ด้วยเงินสดโดยไม่ต้องขายตัวอื่น
+- ทำเฉพาะเมื่อมีเหตุผลแข็งแกร่งมาก ไม่ใช่แค่ "น่าสนใจ"
+- ห้ามเทรดเพื่อให้รู้สึกว่าทำงาน
+
+เงื่อนไขที่อนุญาตให้ SELL:
+- thesis_status = invalidated หรือ at_risk อย่างชัดเจน
+- ไม่ใช่แค่ราคาลง
+
+เงื่อนไขที่อนุญาตให้ BUY:
+- มีเหตุผล fundamental ชัดเจน + มีเงินสดพอ (ไม่เกิน 40% ของพอร์ต)
+- ไม่ใช่แค่ราคาขึ้นหรือข่าวดีระยะสั้น
+
+ตอบเป็น JSON array (ไม่มี ```):
 [
   {{
     "action": "BUY" | "SELL",
     "ticker": "TICKER",
-    "reason_th": "เหตุผลภาษาไทย 2-3 ประโยค",
-    "size_pct": 5,
-    "urgency": "today" | "this_week" | "wait"
+    "reason_th": "เหตุผล fundamental ที่แข็งแกร่ง 2-3 ประโยค",
+    "conviction": "high" | "medium",
+    "size_pct": 5
   }}
 ]
 
-กฎ:
-- thesis_status = invalidated → SELL
-- thesis_status = at_risk → พิจารณา SELL
-- watchlist มี signal + เงินสดพอ → พิจารณา BUY
-- ถ้าไม่มีอะไรน่าทำ → ส่ง [] กลับ
-- action ไม่เกิน 2 รายการต่อครั้ง
+ถ้าไม่มีโอกาสที่ดีพอ → ส่ง [] เท่านั้น (ไม่ต้องอธิบาย)
+รับเฉพาะ conviction = high เท่านั้น action ไม่เกิน 1 รายการ
 """
     text = call_ai(prompt).strip()
     try:
@@ -369,7 +381,10 @@ Watchlist:
             if text.startswith("json"):
                 text = text[4:]
         decisions = json.loads(text.strip())
-        return [d for d in decisions if d.get("action") in ["BUY", "SELL"]]
+        # รับเฉพาะ high conviction เท่านั้น
+        return [d for d in decisions
+                if d.get("action") in ["BUY", "SELL"]
+                and d.get("conviction") == "high"]
     except Exception as e:
         print(f"AI trading error: {e}")
         return []
@@ -388,17 +403,24 @@ def announce_ai_pending_decision(ai_portfolio: dict, decision: dict):
     est_shares = est_usd / est_price
     action_th  = "ซื้อ" if action == "BUY" else "ขาย"
 
+    # หาวันตลาดเปิดถัดไป
+    now_bkk   = bangkok_now()
+    days_ahead = (7 - now_bkk.weekday()) % 7  # วันจันทร์ถัดไป
+    if days_ahead == 0:
+        days_ahead = 7
+    next_open = (now_bkk + datetime.timedelta(days=days_ahead)).strftime("%A %d %b")
+
     send_telegram(
-        f"📢 *AI จะ{action_th} {ticker} — รอตลาดเปิด 20:30 น.*\n\n"
+        f"📋 *AI วางแผนจะ{action_th} {ticker}*\n"
+        f"_(ยังไม่ได้{action_th} — รอตลาดเปิดวัน{next_open} 20:30 น.)_\n\n"
         f"*เหตุผล:* {decision.get('reason_th','')}\n\n"
-        f"*รายละเอียดโดยประมาณ:*\n"
-        f"• ราคา ณ ขณะนี้: ${est_price:.2f}\n"
-        f"• จำนวนประมาณ: {est_shares:.2f} หุ้น\n"
-        f"• มูลค่าประมาณ: ${est_usd:,.2f} (฿{est_usd*THB_RATE:,.0f})\n"
-        f"• สัดส่วน: ~{size_pct}% ของพอร์ต\n"
-        f"• เงินสด AI ก่อนซื้อ: ${ai_portfolio.get('cash_usd',0):,.2f}\n\n"
-        f"_AI จะซื้อจริงตอนตลาดเปิด ราคาอาจต่างจากนี้_\n"
-        f"_ถ้าเห็นด้วย สามารถทำตามใน My Portfolio ได้_"
+        f"*ประมาณการ ณ ขณะนี้:*\n"
+        f"• ราคา: ${est_price:.2f}/หุ้น\n"
+        f"• จำนวน: ~{est_shares:.2f} หุ้น\n"
+        f"• มูลค่า: ~${est_usd:,.2f} (฿{est_usd*THB_RATE:,.0f})\n"
+        f"• เงินสด AI ปัจจุบัน: ${ai_portfolio.get('cash_usd',0):,.2f}\n\n"
+        f"⚠️ _ราคาจริงจะเปลี่ยนตามตลาด — AI จะเช็ค thesis ก่อน execute_\n"
+        f"✏️ _ถ้าเห็นด้วย สามารถทำตามใน My Portfolio ได้เลย_"
     )
 
     # บันทึกเป็น pending
@@ -460,12 +482,12 @@ def execute_pending_decisions(ai_portfolio: dict):
             ai_portfolio["cash_usd"] = new_cash
 
             send_telegram(
-                f"✅ *AI {action_th} {ticker} เรียบร้อย*\n\n"
+                f"✅ *AI {action_th} {ticker} แล้ว* — ตลาดเปิด\n\n"
                 f"• จำนวน: *{shares:.4f} หุ้น*\n"
-                f"• ราคา: *${price:.2f}/หุ้น*\n"
+                f"• ราคาที่ซื้อ: *${price:.2f}/หุ้น*\n"
                 f"• มูลค่ารวม: *${trade_usd:,.2f}* (฿{trade_usd*THB_RATE:,.0f})\n"
                 f"• เงินสดก่อน: ${old_cash:,.2f}\n"
-                f"• เงินสดหลัง: *${new_cash:,.2f}* (฿{new_cash*THB_RATE:,.0f})"
+                f"• เงินสดหลังซื้อ: *${new_cash:,.2f}* (฿{new_cash*THB_RATE:,.0f})"
             )
 
         elif action == "SELL":
@@ -483,12 +505,12 @@ def execute_pending_decisions(ai_portfolio: dict):
             ai_portfolio["cash_usd"] = new_cash
 
             send_telegram(
-                f"✅ *AI {action_th} {ticker} เรียบร้อย*\n\n"
+                f"✅ *AI {action_th} {ticker} แล้ว* — ตลาดเปิด\n\n"
                 f"• จำนวน: *{shares:.4f} หุ้น*\n"
-                f"• ราคา: *${price:.2f}/หุ้น*\n"
+                f"• ราคาที่ขาย: *${price:.2f}/หุ้น*\n"
                 f"• มูลค่ารวม: *${sell_usd:,.2f}* (฿{sell_usd*THB_RATE:,.0f})\n"
                 f"• เงินสดก่อน: ${old_cash:,.2f}\n"
-                f"• เงินสดหลัง: *${new_cash:,.2f}* (฿{new_cash*THB_RATE:,.0f})"
+                f"• เงินสดหลังขาย: *${new_cash:,.2f}* (฿{new_cash*THB_RATE:,.0f})"
             )
 
         log = {
