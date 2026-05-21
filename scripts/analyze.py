@@ -18,7 +18,12 @@ TELEGRAM_TOKEN  = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "5731895043")
 THB_RATE        = float(os.environ.get("THB_RATE", "36"))
 OPENAI_MODEL    = "gpt-4o-mini"
-THAI            = "ตอบเป็นภาษาไทยทุกส่วน ยกเว้น ticker หุ้น ตัวเลข และคำศัพท์เทคนิคเช่น thesis, kill condition, bull/bear case"
+THAI = (
+    "⚠️ คำสั่งสำคัญ: ต้องตอบเป็นภาษาไทยทั้งหมด ห้ามใช้ภาษาอังกฤษในเนื้อหา "
+    "ยกเว้น: ชื่อ ticker (เช่น AMZN, MSFT), ตัวเลข, และคำเฉพาะทางเทคนิค "
+    "เช่น thesis, kill condition, bull/bear case, AWS, Azure, Copilot ฯลฯ "
+    "ถ้าตอบเป็นภาษาอังกฤษถือว่าตอบผิด"
+)
 
 MODE = sys.argv[1] if len(sys.argv) > 1 else "scan"
 
@@ -96,17 +101,26 @@ def bangkok_now():
     return datetime.datetime.now(pytz.timezone("Asia/Bangkok"))
 
 def next_scan_bkk() -> str:
-    """Return next scheduled scan time as readable string"""
+    """Return next scheduled scan time (always in the future)"""
     now = bangkok_now()
-    h, m = now.hour, now.minute
-    # Scans run every hour 09-23 BKK; key scans at 08, 20
+    h = now.hour
     scan_hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
     for sh in scan_hours:
-        if sh > h or (sh == h and m < 55):
+        if sh > h:          # strictly greater — never return current or past hour
             return f"{sh:02d}:00 น. (BKK)"
-    # Next morning
     tom = now + datetime.timedelta(days=1)
     return tom.strftime("%d %b") + " 08:00 น. (BKK)"
+
+
+def is_market_open() -> bool:
+    """ตลาด US เปิด: 20:30–03:00 BKK วันจันทร์–ศุกร์"""
+    now   = bangkok_now()
+    total = now.hour * 60 + now.minute
+    wd    = now.weekday()          # 0=Mon 4=Fri 5=Sat 6=Sun
+    if wd == 5 or wd == 6:
+        return False
+    # 20:30 = 1230 min, midnight wraps, 03:00 = 180 min
+    return total >= 1230 or total < 180
 
 def send_telegram(message: str, urgent: bool = False):
     if not TELEGRAM_TOKEN:
@@ -361,41 +375,138 @@ Watchlist:
         return []
 
 
-def execute_ai_decision(ai_portfolio: dict, decision: dict, price: float):
-    """Simulate trade execution in AI portfolio"""
-    ticker    = decision["ticker"]
-    action    = decision["action"]
-    nav       = ai_portfolio.get("nav_approx_usd", 3142)
-    size_pct  = max(2, min(decision.get("size_pct", 5), 30))
-    trade_usd = nav * size_pct / 100
+def announce_ai_pending_decision(ai_portfolio: dict, decision: dict):
+    """ประกาศการตัดสินใจก่อนตลาดเปิด และบันทึกเป็น pending"""
+    ticker   = decision["ticker"]
+    action   = decision["action"]
+    size_pct = max(2, min(decision.get("size_pct", 5), 30))
+    nav      = ai_portfolio.get("nav_approx_usd", 3142)
+    est_usd  = nav * size_pct / 100
 
-    if action == "SELL":
-        ai_portfolio["holdings"] = [h for h in ai_portfolio["holdings"]
-                                    if h["ticker"] != ticker]
-        ai_portfolio["cash_usd"] = ai_portfolio.get("cash_usd", 0) + trade_usd
+    price_data = get_price(ticker)
+    est_price  = price_data["price"] or 1
+    est_shares = est_usd / est_price
+    action_th  = "ซื้อ" if action == "BUY" else "ขาย"
 
-    elif action == "BUY" and ai_portfolio.get("cash_usd", 0) >= trade_usd:
-        existing = next((h for h in ai_portfolio["holdings"] if h["ticker"] == ticker), None)
-        if existing:
-            existing["weight_pct"] += size_pct
-        else:
-            ai_portfolio["holdings"].append({
-                "ticker": ticker, "weight_pct": size_pct,
-                "cost_basis_usd": price, "note": decision.get("reason_th", "")
-            })
-        ai_portfolio["cash_usd"] = ai_portfolio.get("cash_usd", 0) - trade_usd
+    send_telegram(
+        f"📢 *AI จะ{action_th} {ticker} — รอตลาดเปิด 20:30 น.*\n\n"
+        f"*เหตุผล:* {decision.get('reason_th','')}\n\n"
+        f"*รายละเอียดโดยประมาณ:*\n"
+        f"• ราคา ณ ขณะนี้: ${est_price:.2f}\n"
+        f"• จำนวนประมาณ: {est_shares:.2f} หุ้น\n"
+        f"• มูลค่าประมาณ: ${est_usd:,.2f} (฿{est_usd*THB_RATE:,.0f})\n"
+        f"• สัดส่วน: ~{size_pct}% ของพอร์ต\n"
+        f"• เงินสด AI ก่อนซื้อ: ${ai_portfolio.get('cash_usd',0):,.2f}\n\n"
+        f"_AI จะซื้อจริงตอนตลาดเปิด ราคาอาจต่างจากนี้_\n"
+        f"_ถ้าเห็นด้วย สามารถทำตามใน My Portfolio ได้_"
+    )
 
-    log = {
-        "date":     bangkok_now().strftime("%Y-%m-%d %H:%M"),
-        "action":   action,
-        "ticker":   ticker,
-        "price":    price,
-        "usd":      trade_usd,
-        "reason":   decision.get("reason_th", ""),
-        "urgency":  decision.get("urgency", "")
+    # บันทึกเป็น pending
+    pending = {
+        **decision,
+        "size_pct":  size_pct,
+        "est_price": est_price,
+        "est_usd":   est_usd,
+        "announced": bangkok_now().strftime("%Y-%m-%d %H:%M"),
+        "status":    "pending"
     }
-    ai_portfolio.setdefault("decisions", []).append(log)
+    ai_portfolio.setdefault("pending_decisions", []).append(pending)
     return ai_portfolio
+
+
+def execute_pending_decisions(ai_portfolio: dict):
+    """Execute pending decisions ตอนตลาดเปิด — ราคาจริง จำนวนจริง"""
+    pending   = ai_portfolio.get("pending_decisions", [])
+    remaining = []
+    executed  = []
+
+    for d in pending:
+        ticker   = d["ticker"]
+        action   = d["action"]
+        size_pct = d.get("size_pct", 5)
+        nav      = ai_portfolio.get("nav_approx_usd", 3142)
+
+        price_data = get_price(ticker)
+        price      = price_data["price"]
+        if not price:
+            remaining.append(d)
+            continue
+
+        trade_usd = nav * size_pct / 100
+        action_th = "ซื้อ" if action == "BUY" else "ขาย"
+
+        if action == "BUY":
+            avail = ai_portfolio.get("cash_usd", 0)
+            if avail < trade_usd:
+                trade_usd = avail          # ใช้เงินที่มีทั้งหมด
+            shares    = trade_usd / price
+            old_cash  = ai_portfolio.get("cash_usd", 0)
+            new_cash  = old_cash - trade_usd
+
+            # อัพเดท holdings
+            existing = next((h for h in ai_portfolio["holdings"]
+                             if h["ticker"] == ticker), None)
+            if existing:
+                existing["weight_pct"] += size_pct
+                existing["shares"]      = existing.get("shares", 0) + shares
+            else:
+                ai_portfolio["holdings"].append({
+                    "ticker":         ticker,
+                    "weight_pct":     size_pct,
+                    "shares":         shares,
+                    "cost_basis_usd": price,
+                    "note":           d.get("reason_th", "")
+                })
+            ai_portfolio["cash_usd"] = new_cash
+
+            send_telegram(
+                f"✅ *AI {action_th} {ticker} เรียบร้อย*\n\n"
+                f"• จำนวน: *{shares:.4f} หุ้น*\n"
+                f"• ราคา: *${price:.2f}/หุ้น*\n"
+                f"• มูลค่ารวม: *${trade_usd:,.2f}* (฿{trade_usd*THB_RATE:,.0f})\n"
+                f"• เงินสดก่อน: ${old_cash:,.2f}\n"
+                f"• เงินสดหลัง: *${new_cash:,.2f}* (฿{new_cash*THB_RATE:,.0f})"
+            )
+
+        elif action == "SELL":
+            holding = next((h for h in ai_portfolio["holdings"]
+                            if h["ticker"] == ticker), None)
+            if not holding:
+                continue
+            shares    = holding.get("shares", trade_usd / price)
+            sell_usd  = shares * price
+            old_cash  = ai_portfolio.get("cash_usd", 0)
+            new_cash  = old_cash + sell_usd
+
+            ai_portfolio["holdings"] = [h for h in ai_portfolio["holdings"]
+                                        if h["ticker"] != ticker]
+            ai_portfolio["cash_usd"] = new_cash
+
+            send_telegram(
+                f"✅ *AI {action_th} {ticker} เรียบร้อย*\n\n"
+                f"• จำนวน: *{shares:.4f} หุ้น*\n"
+                f"• ราคา: *${price:.2f}/หุ้น*\n"
+                f"• มูลค่ารวม: *${sell_usd:,.2f}* (฿{sell_usd*THB_RATE:,.0f})\n"
+                f"• เงินสดก่อน: ${old_cash:,.2f}\n"
+                f"• เงินสดหลัง: *${new_cash:,.2f}* (฿{new_cash*THB_RATE:,.0f})"
+            )
+
+        log = {
+            "date":    bangkok_now().strftime("%Y-%m-%d %H:%M"),
+            "action":  action,
+            "ticker":  ticker,
+            "shares":  shares,
+            "price":   price,
+            "usd":     trade_usd if action == "BUY" else sell_usd,
+            "reason":  d.get("reason_th", ""),
+            "status":  "executed"
+        }
+        ai_portfolio.setdefault("decisions", []).append(log)
+        executed.append(log)
+        time.sleep(1)
+
+    ai_portfolio["pending_decisions"] = remaining
+    return ai_portfolio, executed
 
 
 def discover_watchlist_candidates(portfolio: dict, holdings_analysis: list) -> list:
@@ -539,8 +650,16 @@ def run_scan():
                f"⏰ scan ถัดไป: *{next_time}*")
         send_telegram(msg)
 
+    # ── Execute pending AI decisions ถ้าตลาดเปิด ──
+    ai_portfolio = load_ai_portfolio()
+    if is_market_open() and ai_portfolio.get("pending_decisions"):
+        print(f"  Executing {len(ai_portfolio['pending_decisions'])} pending AI decisions...")
+        ai_portfolio, executed = execute_pending_decisions(ai_portfolio)
+        if executed:
+            save_ai_portfolio(ai_portfolio)
+
     print(f"Scan done. {len(urgent_alerts)} urgent, {len(alerts)} alerts.")
-    update_dashboard_data(portfolio, [])
+    update_dashboard_data(portfolio, [], ai_portfolio=ai_portfolio)
 
 
 def run_weekly():
@@ -568,26 +687,16 @@ def run_weekly():
         holdings_analysis.append(holding)
         time.sleep(2)
 
-    # ── AI paper trading ──
+    # ── AI paper trading — ประกาศก่อน execute ตอนตลาดเปิด ──
     decisions = ai_make_trading_decision(ai_portfolio, holdings_analysis,
                                          portfolio.get("watchlist", []))
     for d in decisions:
-        ticker     = d["ticker"]
-        action     = d["action"]
-        price_data = get_price(ticker)
-        action_th  = "ซื้อ" if action == "BUY" else "ขาย"
-        urgency_th = {"today": "วันนี้", "this_week": "สัปดาห์นี้", "wait": "รอดูก่อน"}.get(
-                      d.get("urgency", ""), "")
-
-        send_telegram(
-            f"🤖 *AI Portfolio — {action_th} {ticker}*\n\n"
-            f"*การตัดสินใจ:* {action_th} {ticker} {urgency_th}\n"
-            f"*เหตุผล:* {d.get('reason_th','')}\n"
-            f"*ขนาด:* ~{d.get('size_pct',0)}% ของพอร์ต\n\n"
-            f"_คุณสามารถทำตามใน My Portfolio ได้ถ้าเห็นด้วย_"
-        )
-        ai_portfolio = execute_ai_decision(ai_portfolio, d, price_data["price"])
+        ai_portfolio = announce_ai_pending_decision(ai_portfolio, d)
         time.sleep(1)
+
+    # ถ้าตลาดเปิดอยู่แล้ว execute ทันที
+    if is_market_open() and ai_portfolio.get("pending_decisions"):
+        ai_portfolio, _ = execute_pending_decisions(ai_portfolio)
 
     # ── Watchlist discovery ──
     suggested = discover_watchlist_candidates(portfolio, holdings_analysis)
