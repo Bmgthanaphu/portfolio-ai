@@ -5,436 +5,681 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --bg: #0e0f0e;
-  --surface: #161817;
-  --surface2: #1e201e;
-  --border: #2a2d2a;
-  --text: #e8ebe5;
-  --muted: #8a8f87;
-  --accent: #b8f07c;
-  --accent-dim: rgba(184,240,124,0.12);
-  --red: #f07c7c;
-  --red-dim: rgba(240,124,124,0.12);
-  --amber: #f0c97c;
-  --amber-dim: rgba(240,201,124,0.12);
-  --blue: #7cb8f0;
-  --blue-dim: rgba(124,184,240,0.12);
+  --bg:        #f4f5f0;
+  --surface:   #ffffff;
+  --surface2:  #eef0eb;
+  --border:    #dfe1da;
+  --text:      #1a1c18;
+  --muted:     #6b7068;
+  --accent:    #2a6b3a;
+  --accent-bg: rgba(42,107,58,0.08);
+  --accent-lt: #e8f5ec;
+  --red:       #c0392b;
+  --red-bg:    rgba(192,57,43,0.08);
+  --amber:     #b56a00;
+  --amber-bg:  rgba(181,106,0,0.08);
+  --blue:      #1a4f8c;
+  --blue-bg:   rgba(26,79,140,0.08);
+  --ai-color:  #5b3db5;
+  --ai-bg:     rgba(91,61,181,0.08);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
   min-height: 100vh;
 }
 
-/* Grid noise overlay */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(255,255,255,0.015) 24px, rgba(255,255,255,0.015) 25px),
-    repeating-linear-gradient(90deg, transparent, transparent 24px, rgba(255,255,255,0.015) 24px, rgba(255,255,255,0.015) 25px);
-  pointer-events: none; z-index: 0;
+.app { max-width: 1140px; margin: 0 auto; padding: 24px 20px; }
+
+/* ── Header ── */
+header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 24px; padding-bottom: 20px;
+  border-bottom: 2px solid var(--border);
 }
+.logo { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600;
+        color: var(--accent); letter-spacing: -0.5px; }
+.logo span { font-style: italic; font-weight: 300; color: var(--muted);
+             font-size: 13px; display: block; margin-top: 2px;
+             font-family: 'Sarabun', sans-serif; }
+.header-right { text-align: right; }
+.last-updated { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+.next-scan { font-size: 12px; color: var(--accent); margin-top: 4px; font-weight: 500; }
 
-.app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+/* ── Tab bar ── */
+.tab-bar {
+  display: flex; gap: 4px; margin-bottom: 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px; width: fit-content;
+}
+.tab {
+  padding: 8px 24px; border-radius: 9px; border: none;
+  font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; background: transparent; color: var(--muted);
+}
+.tab.active { background: var(--accent); color: #fff; }
+.tab.active.ai-tab { background: var(--ai-color); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 
-/* Header */
-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-.logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--accent); letter-spacing: -0.5px; }
-.logo span { font-style: italic; font-weight: 300; color: var(--muted); font-size: 14px; display: block; margin-top: 2px; font-family: 'DM Sans', sans-serif; }
-.last-updated { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
-
-/* KPI bar */
-.kpi-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-.kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-family: 'DM Mono', monospace; }
-.kpi-value { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--text); }
+/* ── KPI bar ── */
+.kpi-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase;
+             letter-spacing: 0.08em; margin-bottom: 6px; font-family: 'DM Mono', monospace; }
+.kpi-value { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--text); }
 .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'DM Mono', monospace; }
-.kpi-value.positive { color: var(--accent); }
-.kpi-value.negative { color: var(--red); }
+.kpi-value.pos { color: var(--accent); }
+.kpi-value.neg { color: var(--red); }
+.kpi-value.ai { color: var(--ai-color); }
 
-/* Cash input */
-.cash-editor { background: var(--surface); border: 1px solid var(--accent); border-radius: 10px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
-.cash-editor label { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; font-family: 'DM Mono', monospace; white-space: nowrap; }
-.cash-editor input { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px; padding: 8px 12px; width: 140px; }
+/* ── Cash editor ── */
+.cash-editor {
+  background: var(--surface); border: 2px solid var(--accent);
+  border-radius: 12px; padding: 14px 20px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.cash-editor label { font-size: 12px; color: var(--accent); font-weight: 600;
+                     text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+.cash-editor input {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: 'DM Mono', monospace; font-size: 16px;
+  padding: 7px 12px; width: 140px;
+}
 .cash-editor input:focus { outline: none; border-color: var(--accent); }
-.cash-editor .thb-display { color: var(--muted); font-size: 13px; font-family: 'DM Mono', monospace; }
-.btn { background: var(--accent); color: #0e0f0e; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s; }
+.cash-thb { color: var(--muted); font-size: 13px; font-family: 'DM Mono', monospace; }
+.btn { background: var(--accent); color: #fff; border: none; border-radius: 8px;
+       padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
+       font-family: 'Sarabun', sans-serif; transition: opacity 0.15s; }
 .btn:hover { opacity: 0.85; }
 .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
 .btn-ghost:hover { border-color: var(--text); color: var(--text); opacity: 1; }
+.btn-ai { background: var(--ai-color); }
 
-/* Main grid */
-.main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+/* ── Main grid ── */
+.main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
 
-/* Section */
-.section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
-.section-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.section-title { font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+/* ── Section ── */
+.section { background: var(--surface); border: 1px solid var(--border);
+           border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.section-header { padding: 14px 20px; border-bottom: 1px solid var(--border);
+                  display: flex; justify-content: space-between; align-items: center; }
+.section-title { font-family: 'DM Mono', monospace; font-size: 11px;
+                 text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
 
-/* Action panel */
-.action-panel { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; margin-bottom: 20px; }
-.action-panel .section-header { border-color: rgba(184,240,124,0.2); }
-.action-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--accent); padding: 16px 20px 4px; }
-.action-body { padding: 4px 20px 20px; color: var(--text); line-height: 1.7; font-size: 14px; }
-.action-body h3 { font-size: 13px; color: var(--muted); font-weight: 400; margin: 14px 0 4px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em; }
-.action-body p { color: var(--text); }
-.action-body .hold { color: var(--accent); font-weight: 500; }
-.action-body .sell { color: var(--red); font-weight: 500; }
-.action-body .buy { color: var(--blue); font-weight: 500; }
+/* ── Recommendation panel ── */
+.rec-panel { background: var(--surface); border: 2px solid var(--accent);
+             border-radius: 12px; margin-bottom: 20px; }
+.rec-panel.ai-panel { border-color: var(--ai-color); }
+.rec-panel .section-header { border-color: var(--accent-bg); }
+.rec-panel.ai-panel .section-header { border-color: var(--ai-bg); }
+.rec-headline { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600;
+                color: var(--accent); padding: 14px 20px 4px; }
+.rec-panel.ai-panel .rec-headline { color: var(--ai-color); }
+.rec-body { padding: 4px 20px 20px; color: var(--text); line-height: 1.75; font-size: 14px; }
+.rec-body h3 { font-size: 12px; color: var(--muted); font-weight: 500; margin: 14px 0 4px;
+               font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em; }
+.rec-body .hold { color: var(--accent); font-weight: 600; }
+.rec-body .sell  { color: var(--red); font-weight: 600; }
+.rec-body .buy   { color: var(--blue); font-weight: 600; }
 
-/* Holdings table */
+/* ── Table ── */
 table { width: 100%; border-collapse: collapse; }
-thead th { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 10px 20px; text-align: left; border-bottom: 1px solid var(--border); }
+thead th { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase;
+           letter-spacing: 0.1em; color: var(--muted); padding: 10px 20px;
+           text-align: left; border-bottom: 1px solid var(--border); background: var(--surface2); }
 tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: var(--surface2); }
-tbody td { padding: 14px 20px; vertical-align: middle; }
-.ticker-cell { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--text); }
-.company-cell { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.weight-bar-wrap { display: flex; align-items: center; gap: 10px; }
-.weight-bar { height: 4px; background: var(--border); border-radius: 2px; flex: 1; min-width: 60px; }
-.weight-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+tbody td { padding: 13px 20px; vertical-align: middle; }
+.ticker-cell { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
+.note-cell { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.weight-wrap { display: flex; align-items: center; gap: 8px; }
+.weight-bar { height: 5px; background: var(--border); border-radius: 3px; flex: 1; min-width: 50px; }
+.weight-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+.weight-fill.ai { background: var(--ai-color); }
 .weight-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; }
 
-/* Status badges */
-.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
-.badge-intact { background: var(--accent-dim); color: var(--accent); }
-.badge-evolving { background: var(--blue-dim); color: var(--blue); }
-.badge-at-risk { background: var(--amber-dim); color: var(--amber); }
-.badge-invalidated { background: var(--red-dim); color: var(--red); }
-.badge-review { background: var(--amber-dim); color: var(--amber); }
-.badge-generating { background: rgba(138,143,135,0.15); color: var(--muted); }
+/* ── Badges ── */
+.badge { display: inline-block; padding: 3px 8px; border-radius: 5px;
+         font-family: 'DM Mono', monospace; font-size: 10px;
+         text-transform: uppercase; letter-spacing: 0.05em; }
+.badge-intact      { background: var(--accent-bg); color: var(--accent); }
+.badge-evolving    { background: var(--blue-bg); color: var(--blue); }
+.badge-at-risk     { background: var(--amber-bg); color: var(--amber); }
+.badge-invalidated { background: var(--red-bg); color: var(--red); }
+.badge-review      { background: var(--amber-bg); color: var(--amber); }
+.badge-generating  { background: rgba(107,112,104,0.12); color: var(--muted); }
 
-/* Thesis drawer */
-.thesis-drawer { display: none; background: var(--surface2); border-top: 1px solid var(--border); padding: 20px; }
+/* ── Thesis drawer ── */
+.thesis-drawer { display: none; background: var(--surface2); border-top: 1px solid var(--border);
+                 padding: 20px; }
 .thesis-drawer.open { display: block; }
-.thesis-content { font-size: 13px; line-height: 1.7; color: var(--text); white-space: pre-wrap; font-family: 'DM Mono', monospace; }
+.thesis-content { font-size: 13px; line-height: 1.75; color: var(--text);
+                  white-space: pre-wrap; font-family: 'DM Mono', monospace; }
 
-/* Watchlist */
-.watchlist-item { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.1s; }
-.watchlist-item:last-child { border-bottom: none; }
-.watchlist-item:hover { background: var(--surface2); }
-.wl-ticker { font-family: 'DM Mono', monospace; font-weight: 500; }
-.wl-reason { font-size: 12px; color: var(--muted); }
-.wl-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 4px; border-radius: 4px; }
-.wl-remove:hover { color: var(--red); background: var(--red-dim); }
+/* ── Change ── */
+.pos { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 12px; }
+.neg { color: var(--red);    font-family: 'DM Mono', monospace; font-size: 12px; }
+.neu { color: var(--muted);  font-family: 'DM Mono', monospace; font-size: 12px; }
 
-/* Add watchlist */
+/* ── Watchlist ── */
+.wl-item { padding: 13px 20px; border-bottom: 1px solid var(--border);
+           display: flex; justify-content: space-between; align-items: center; }
+.wl-item:last-child { border-bottom: none; }
+.wl-ticker { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 13px; }
+.wl-reason { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.wl-remove { background: none; border: none; color: var(--muted); cursor: pointer;
+             font-size: 16px; padding: 4px; border-radius: 4px; line-height: 1; }
+.wl-remove:hover { color: var(--red); background: var(--red-bg); }
 .add-wl { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-.add-wl input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; padding: 7px 10px; text-transform: uppercase; }
+.add-wl input { flex: 1; background: var(--surface2); border: 1px solid var(--border);
+                border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace;
+                font-size: 13px; padding: 7px 10px; text-transform: uppercase; }
 .add-wl input:focus { outline: none; border-color: var(--accent); }
 
-/* Right panel sections */
-.right-panel .section { margin-bottom: 20px; }
+/* ── AI Suggested ── */
+.suggested-badge { display: inline-block; padding: 2px 7px; border-radius: 4px;
+                   font-size: 10px; font-family: 'DM Mono', monospace;
+                   background: var(--ai-bg); color: var(--ai-color);
+                   text-transform: uppercase; margin-left: 6px; }
 
-/* Philosophy */
-.philosophy-item { padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.philosophy-item:last-child { border-bottom: none; }
+/* ── Decision log ── */
+.decision-item { padding: 12px 20px; border-bottom: 1px solid var(--border); }
+.decision-item:last-child { border-bottom: none; }
+.decision-action { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; }
+.decision-action.buy  { color: var(--blue); }
+.decision-action.sell { color: var(--red); }
+.decision-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.decision-reason { font-size: 12px; color: var(--text); margin-top: 3px; }
+
+/* ── Philosophy ── */
+.phil-item { padding: 10px 20px; border-bottom: 1px solid var(--border);
+             display: flex; justify-content: space-between; align-items: center; }
+.phil-item:last-child { border-bottom: none; }
 .phil-label { font-size: 12px; color: var(--muted); }
 .phil-value { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text); }
 
-/* Loading */
-.loading { text-align: center; padding: 60px 20px; color: var(--muted); font-family: 'DM Mono', monospace; }
+/* ── Chart ── */
+.chart-wrap { padding: 20px; height: 220px; position: relative; }
+
+/* ── Clock ── */
+.clock-box { margin: 14px 20px; padding: 14px; background: var(--surface2);
+             border-radius: 10px; text-align: center; }
+.clock-time { font-family: 'Fraunces', serif; font-size: 26px; color: var(--accent); }
+.clock-status { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* ── Loading ── */
+.loading { text-align: center; padding: 40px; color: var(--muted);
+           font-family: 'DM Mono', monospace; font-size: 13px; }
 .dot { animation: blink 1.2s infinite; }
 .dot:nth-child(2) { animation-delay: 0.4s; }
 .dot:nth-child(3) { animation-delay: 0.8s; }
-@keyframes blink { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+@keyframes blink { 0%,80%,100%{opacity:.2;} 40%{opacity:1;} }
 
-/* Change indicator */
-.change-pos { color: var(--accent); font-family: 'DM Mono', monospace; font-size: 12px; }
-.change-neg { color: var(--red); font-family: 'DM Mono', monospace; font-size: 12px; }
-.change-neu { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 12px; }
+/* ── Toast ── */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--accent);
+         color: #fff; padding: 10px 18px; border-radius: 10px; font-size: 13px;
+         font-weight: 500; z-index: 9999; animation: slideUp 0.2s ease; }
+@keyframes slideUp { from{transform:translateY(8px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+
+/* ── Performance strip ── */
+.perf-strip { display: flex; gap: 12px; margin-bottom: 20px; }
+.perf-card { flex: 1; background: var(--surface); border: 1px solid var(--border);
+             border-radius: 10px; padding: 14px 16px; }
+.perf-label { font-size: 11px; color: var(--muted); text-transform: uppercase;
+              letter-spacing: 0.07em; font-family: 'DM Mono', monospace; }
+.perf-val { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600;
+            margin-top: 4px; }
 
 @media (max-width: 768px) {
   .kpi-bar { grid-template-columns: repeat(2, 1fr); }
   .main-grid { grid-template-columns: 1fr; }
+  .perf-strip { flex-wrap: wrap; }
 }
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- Header -->
   <header>
     <div>
       <div class="logo">Portfolio AI <span>Nick Sleep–style discipline</span></div>
     </div>
-    <div class="last-updated" id="last-updated">Loading...</div>
+    <div class="header-right">
+      <div class="last-updated" id="last-updated">กำลังโหลด...</div>
+      <div class="next-scan" id="next-scan">⏰ scan ถัดไป: —</div>
+    </div>
   </header>
 
-  <!-- Cash editor -->
-  <div class="cash-editor">
-    <label>💵 Cash available</label>
-    <input type="number" id="cash-input" placeholder="278" step="1">
-    <span class="thb-display" id="cash-thb">฿ —</span>
-    <button class="btn" onclick="saveCash()">Update</button>
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('mine')">📊 พอร์ตของฉัน</button>
+    <button class="tab ai-tab" onclick="switchTab('ai')">🤖 พอร์ต AI</button>
   </div>
 
-  <!-- KPI bar -->
-  <div class="kpi-bar">
-    <div class="kpi">
-      <div class="kpi-label">Portfolio NAV</div>
-      <div class="kpi-value" id="kpi-nav">—</div>
-      <div class="kpi-sub" id="kpi-nav-thb">—</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">vs S&P 500</div>
-      <div class="kpi-value" id="kpi-spy">—</div>
-      <div class="kpi-sub">since inception</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Holdings</div>
-      <div class="kpi-value" id="kpi-holdings">—</div>
-      <div class="kpi-sub" id="kpi-cash">cash: —</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Last action</div>
-      <div class="kpi-value" id="kpi-action" style="font-size:14px">—</div>
-      <div class="kpi-sub" id="kpi-action-date">—</div>
-    </div>
-  </div>
+  <!-- ═══════════════════════════ MY PORTFOLIO TAB ═══════════════════════════ -->
+  <div class="tab-panel active" id="tab-mine">
 
-  <div class="main-grid">
-    <!-- LEFT column -->
-    <div class="left-panel">
+    <!-- Cash editor -->
+    <div class="cash-editor">
+      <label>💵 เงินสดที่มี</label>
+      <input type="number" id="cash-input" placeholder="278" step="1">
+      <span class="cash-thb" id="cash-thb-display">฿ —</span>
+      <button class="btn" onclick="saveCash()">บันทึก</button>
+    </div>
 
-      <!-- Action panel -->
-      <div class="action-panel">
-        <div class="section-header">
-          <span class="section-title">🎯 This week's recommendation</span>
-          <span class="last-updated" id="rec-date">—</span>
-        </div>
-        <div class="action-title" id="action-headline">Loading recommendation...</div>
-        <div class="action-body" id="action-body">
-          <div class="loading">Analyzing<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
-        </div>
+    <!-- KPI bar -->
+    <div class="kpi-bar">
+      <div class="kpi">
+        <div class="kpi-label">พอร์ตรวม (NAV)</div>
+        <div class="kpi-value" id="my-nav">—</div>
+        <div class="kpi-sub" id="my-nav-thb">—</div>
       </div>
-
-      <!-- Holdings -->
-      <div class="section">
-        <div class="section-header">
-          <span class="section-title">📊 Holdings</span>
-          <span style="font-size:12px;color:var(--muted)">Click row for thesis</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Ticker</th>
-              <th>Status</th>
-              <th>Weight</th>
-              <th>Change</th>
-            </tr>
-          </thead>
-          <tbody id="holdings-body">
-            <tr><td colspan="4" class="loading">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></td></tr>
-          </tbody>
-        </table>
+      <div class="kpi">
+        <div class="kpi-label">เทียบ S&P 500</div>
+        <div class="kpi-value" id="my-vs-spy">—</div>
+        <div class="kpi-sub">ตั้งแต่เริ่มต้น</div>
       </div>
-
+      <div class="kpi">
+        <div class="kpi-label">จำนวน holdings</div>
+        <div class="kpi-value" id="my-count">—</div>
+        <div class="kpi-sub" id="my-cash-pct">เงินสด: —</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">การตัดสินใจล่าสุด</div>
+        <div class="kpi-value" id="my-action" style="font-size:14px">—</div>
+        <div class="kpi-sub" id="my-action-date">—</div>
+      </div>
     </div>
 
-    <!-- RIGHT column -->
-    <div class="right-panel">
+    <div class="main-grid">
+      <div class="left-panel">
 
-      <!-- Watchlist -->
-      <div class="section">
-        <div class="section-header">
-          <span class="section-title">👁 Watchlist</span>
-        </div>
-        <div id="watchlist-items">
-          <div class="loading">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
-        </div>
-        <div class="add-wl">
-          <input type="text" id="wl-input" placeholder="ADD TICKER" maxlength="6"
-            onkeydown="if(event.key==='Enter')addToWatchlist()">
-          <button class="btn btn-ghost" onclick="addToWatchlist()">+ Add</button>
-        </div>
-      </div>
-
-      <!-- Philosophy -->
-      <div class="section">
-        <div class="section-header">
-          <span class="section-title">📖 Philosophy</span>
-        </div>
-        <div id="philosophy-items">
-          <div class="philosophy-item"><span class="phil-label">Style</span><span class="phil-value">Quality Growth</span></div>
-          <div class="philosophy-item"><span class="phil-label">Min hold</span><span class="phil-value">6 months</span></div>
-          <div class="philosophy-item"><span class="phil-label">Max positions</span><span class="phil-value">10 stocks</span></div>
-          <div class="philosophy-item"><span class="phil-label">Max cash</span><span class="phil-value">40%</span></div>
-          <div class="philosophy-item"><span class="phil-label">Sell trigger</span><span class="phil-value">Data, not price</span></div>
-        </div>
-      </div>
-
-      <!-- Timezone info -->
-      <div class="section">
-        <div class="section-header">
-          <span class="section-title">🕐 Market hours (BKK)</span>
-        </div>
-        <div id="market-status" style="padding:14px 20px;">
-          <div class="philosophy-item" style="padding:6px 0;border:none">
-            <span class="phil-label">US Market open</span>
-            <span class="phil-value">20:30 น.</span>
+        <!-- Recommendation -->
+        <div class="rec-panel">
+          <div class="section-header">
+            <span class="section-title">🎯 คำแนะนำประจำสัปดาห์</span>
+            <span class="last-updated" id="rec-date">—</span>
           </div>
-          <div class="philosophy-item" style="padding:6px 0;border:none">
-            <span class="phil-label">US Market close</span>
-            <span class="phil-value">03:00 น.</span>
-          </div>
-          <div class="philosophy-item" style="padding:6px 0;border:none">
-            <span class="phil-label">Pre-market scan</span>
-            <span class="phil-value">08:00 น.</span>
-          </div>
-          <div class="philosophy-item" style="padding:6px 0;border:none">
-            <span class="phil-label">Weekly review</span>
-            <span class="phil-value">เสาร์ 09:00 น.</span>
-          </div>
-          <div style="margin-top:12px;padding:10px;background:var(--surface2);border-radius:8px;text-align:center;">
-            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Bangkok time now</div>
-            <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--accent);margin-top:4px;" id="bkk-clock">—</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;" id="market-open-status">—</div>
+          <div class="rec-headline" id="my-rec-headline">กำลังโหลด...</div>
+          <div class="rec-body" id="my-rec-body">
+            <div class="loading">กำลังวิเคราะห์<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
           </div>
         </div>
-      </div>
 
+        <!-- Holdings -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title">📈 Holdings</span>
+            <span style="font-size:12px;color:var(--muted)">กดแถวเพื่อดู thesis</span>
+          </div>
+          <table>
+            <thead><tr><th>Ticker</th><th>สถานะ</th><th>สัดส่วน</th><th>วันนี้</th></tr></thead>
+            <tbody id="my-holdings-body">
+              <tr><td colspan="4" class="loading">กำลังโหลด<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- NAV Chart -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title">📉 Performance</span>
+            <span style="font-size:12px;color:var(--muted)">พอร์ตของฉัน vs SPY</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="my-chart"></canvas>
+          </div>
+        </div>
+
+      </div>
+      <div class="right-panel">
+
+        <!-- Watchlist -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title">👁 Watchlist</span>
+          </div>
+          <div id="watchlist-items">
+            <div class="loading">กำลังโหลด<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+          </div>
+          <div class="add-wl">
+            <input type="text" id="wl-input" placeholder="เพิ่ม TICKER" maxlength="6"
+              onkeydown="if(event.key==='Enter')addToWatchlist()">
+            <button class="btn btn-ghost" onclick="addToWatchlist()">+ เพิ่ม</button>
+          </div>
+        </div>
+
+        <!-- AI Suggested -->
+        <div class="section" id="suggested-section" style="display:none">
+          <div class="section-header">
+            <span class="section-title">💡 AI แนะนำ <span class="suggested-badge">ใหม่</span></span>
+          </div>
+          <div id="suggested-items"></div>
+        </div>
+
+        <!-- Philosophy -->
+        <div class="section">
+          <div class="section-header"><span class="section-title">📖 Philosophy</span></div>
+          <div class="phil-item"><span class="phil-label">สไตล์</span><span class="phil-value">Quality Growth</span></div>
+          <div class="phil-item"><span class="phil-label">ถือขั้นต่ำ</span><span class="phil-value">6 เดือน</span></div>
+          <div class="phil-item"><span class="phil-label">Max positions</span><span class="phil-value">10 ตัว</span></div>
+          <div class="phil-item"><span class="phil-label">Max เงินสด</span><span class="phil-value">40%</span></div>
+          <div class="phil-item"><span class="phil-label">Sell trigger</span><span class="phil-value">ข้อมูล ไม่ใช่ราคา</span></div>
+        </div>
+
+        <!-- Clock -->
+        <div class="section">
+          <div class="section-header"><span class="section-title">🕐 เวลาตลาด (BKK)</span></div>
+          <div style="padding:14px 20px">
+            <div class="phil-item" style="padding:6px 0;border:none"><span class="phil-label">ตลาด US เปิด</span><span class="phil-value">20:30 น.</span></div>
+            <div class="phil-item" style="padding:6px 0;border:none"><span class="phil-label">ตลาด US ปิด</span><span class="phil-value">03:00 น.</span></div>
+            <div class="phil-item" style="padding:6px 0;border:none"><span class="phil-label">Pre-market scan</span><span class="phil-value">08:00 น.</span></div>
+            <div class="phil-item" style="padding:6px 0;border:none"><span class="phil-label">Weekly review</span><span class="phil-value">เสาร์ 09:00 น.</span></div>
+          </div>
+          <div class="clock-box">
+            <div class="clock-time" id="bkk-clock">—</div>
+            <div class="clock-status" id="market-status">—</div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
-</div>
+  </div><!-- end tab-mine -->
+
+  <!-- ═══════════════════════════ AI PORTFOLIO TAB ═══════════════════════════ -->
+  <div class="tab-panel" id="tab-ai">
+
+    <!-- AI KPI -->
+    <div class="kpi-bar">
+      <div class="kpi">
+        <div class="kpi-label">AI Portfolio NAV</div>
+        <div class="kpi-value ai" id="ai-nav">—</div>
+        <div class="kpi-sub" id="ai-nav-thb">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">เทียบ S&P 500</div>
+        <div class="kpi-value" id="ai-vs-spy">—</div>
+        <div class="kpi-sub">ตั้งแต่เริ่มต้น</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">AI Holdings</div>
+        <div class="kpi-value" id="ai-count">—</div>
+        <div class="kpi-sub" id="ai-cash-display">เงินสด: —</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">การเทรดล่าสุด</div>
+        <div class="kpi-value" id="ai-last-action" style="font-size:13px">—</div>
+        <div class="kpi-sub" id="ai-last-date">—</div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="left-panel">
+
+        <!-- AI Decision log -->
+        <div class="rec-panel ai-panel">
+          <div class="section-header">
+            <span class="section-title">🤖 การตัดสินใจล่าสุดของ AI</span>
+          </div>
+          <div class="rec-headline" id="ai-decision-headline">—</div>
+          <div class="rec-body" id="ai-decision-body">
+            <div class="loading">รอการวิเคราะห์<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+          </div>
+        </div>
+
+        <!-- AI Holdings -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title">📈 AI Holdings</span>
+            <span style="font-size:12px;color:var(--muted)">กดแถวเพื่อดู thesis</span>
+          </div>
+          <table>
+            <thead><tr><th>Ticker</th><th>สถานะ</th><th>สัดส่วน</th><th>วันนี้</th></tr></thead>
+            <tbody id="ai-holdings-body">
+              <tr><td colspan="4" class="loading">กำลังโหลด<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- AI NAV Chart -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title">📉 AI Performance</span>
+            <span style="font-size:12px;color:var(--muted)">AI portfolio vs SPY</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="ai-chart"></canvas>
+          </div>
+        </div>
+
+      </div>
+      <div class="right-panel">
+
+        <!-- Decision history -->
+        <div class="section">
+          <div class="section-header"><span class="section-title">📋 ประวัติการเทรด AI</span></div>
+          <div id="ai-decisions-list">
+            <div class="loading">ยังไม่มีประวัติ</div>
+          </div>
+        </div>
+
+        <!-- Philosophy (AI) -->
+        <div class="section">
+          <div class="section-header"><span class="section-title">🧠 กฎของ AI</span></div>
+          <div class="phil-item"><span class="phil-label">Sell trigger</span><span class="phil-value">Thesis invalidated</span></div>
+          <div class="phil-item"><span class="phil-label">Buy trigger</span><span class="phil-value">Strong signal + ข้อมูล</span></div>
+          <div class="phil-item"><span class="phil-label">Max action/ครั้ง</span><span class="phil-value">2 รายการ</span></div>
+          <div class="phil-item"><span class="phil-label">Min hold</span><span class="phil-value">6 เดือน</span></div>
+          <div class="phil-item"><span class="phil-label">Paper trading</span><span class="phil-value">Simulation เท่านั้น</span></div>
+        </div>
+
+        <!-- Clock (same) -->
+        <div class="section">
+          <div class="section-header"><span class="section-title">🕐 เวลาตลาด (BKK)</span></div>
+          <div class="clock-box" style="margin:14px 20px">
+            <div class="clock-time" id="bkk-clock-ai">—</div>
+            <div class="clock-status" id="market-status-ai">—</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- end tab-ai -->
+
+</div><!-- end .app -->
 
 <script>
-const THB_RATE = 36;
-let portfolioData = null;
+const THB = 36;
+let D = null; // dashboard data
 
-// ── Data loading ─────────────────────────────────────────────────────────
+// ── Tab ──────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  const btn = tab === 'mine'
+    ? document.querySelector('.tab:not(.ai-tab)')
+    : document.querySelector('.tab.ai-tab');
+  btn.classList.add('active');
+}
+
+// ── Load data ────────────────────────────────────────────────────────────────
 async function loadData() {
   try {
     const res = await fetch('data/dashboard.json?t=' + Date.now());
-    if (!res.ok) throw new Error('No data yet');
-    portfolioData = await res.json();
+    if (!res.ok) throw new Error('no data');
+    D = await res.json();
+    applyLocalOverrides();
     renderAll();
   } catch(e) {
-    // Show placeholder if no data yet
-    document.getElementById('action-headline').textContent = 'Awaiting first analysis run';
-    document.getElementById('action-body').innerHTML =
-      '<p style="color:var(--muted)">The AI will analyze your portfolio on the next scheduled run (Saturday 09:00 BKK or trigger manually via GitHub Actions).</p>';
-    document.getElementById('holdings-body').innerHTML =
-      '<tr><td colspan="4" style="padding:20px;color:var(--muted);font-family:DM Mono,monospace;text-align:center;">No data yet — run the workflow first</td></tr>';
+    document.getElementById('my-rec-headline').textContent = 'รอการวิเคราะห์ครั้งแรก';
+    document.getElementById('my-rec-body').innerHTML =
+      '<p style="color:var(--muted)">AI จะวิเคราะห์พอร์ตในรอบถัดไป (เสาร์ 09:00 น. หรือ trigger ผ่าน GitHub Actions)</p>';
   }
 }
 
 function renderAll() {
-  if (!portfolioData) return;
-  renderKPIs();
-  renderRecommendation();
-  renderHoldings();
+  if (!D) return;
+  renderHeader();
+  renderMyPortfolio();
+  renderAiPortfolio();
   renderWatchlist();
-  document.getElementById('last-updated').textContent = portfolioData.last_updated_bkk || '—';
-  document.getElementById('cash-input').value = portfolioData.cash_usd || '';
-  updateCashDisplay(portfolioData.cash_usd || 0);
+  renderSuggested();
+  drawMyChart();
+  drawAiChart();
 }
 
-// ── KPIs ─────────────────────────────────────────────────────────────────
-function renderKPIs() {
-  const d = portfolioData;
-  const navUsd = d.nav_usd || 0;
-  const navThb = navUsd * THB_RATE;
-  document.getElementById('kpi-nav').textContent = `$${navUsd.toLocaleString('en', {minimumFractionDigits:0})}`;
-  document.getElementById('kpi-nav-thb').textContent = `฿${navThb.toLocaleString('th')}`;
-
-  const cashUsd = d.cash_usd || 0;
-  const cashPct = navUsd > 0 ? ((cashUsd / navUsd) * 100).toFixed(1) : 0;
-  document.getElementById('kpi-cash').textContent = `cash: ${cashPct}% ($${cashUsd})`;
-
-  const holdings = d.holdings || [];
-  document.getElementById('kpi-holdings').textContent = holdings.length;
-
-  document.getElementById('kpi-spy').textContent = '—';
-  document.getElementById('kpi-action').textContent = 'Hold all';
-  document.getElementById('kpi-action-date').textContent = 'No actions yet';
+// ── Header ───────────────────────────────────────────────────────────────────
+function renderHeader() {
+  document.getElementById('last-updated').textContent = D.last_updated_bkk || '—';
+  document.getElementById('next-scan').textContent = '⏰ scan ถัดไป: ' + (D.next_scan_bkk || '—');
 }
 
-// ── Recommendation ────────────────────────────────────────────────────────
-function renderRecommendation() {
-  const rec = portfolioData.recommendation || '';
-  if (!rec) {
-    document.getElementById('action-headline').textContent = 'No recommendation yet';
-    document.getElementById('action-body').textContent = 'Run weekly analysis to get recommendations.';
-    return;
+// ── My Portfolio ──────────────────────────────────────────────────────────────
+function renderMyPortfolio() {
+  const my = D.my || {};
+  const nav = my.nav_usd || 0;
+  const cash = my.cash_usd || 0;
+
+  document.getElementById('my-nav').textContent = '$' + nav.toLocaleString();
+  document.getElementById('my-nav-thb').textContent = '฿' + (nav * THB).toLocaleString('th', {maximumFractionDigits: 0});
+  document.getElementById('my-count').textContent = (my.holdings || []).length;
+  document.getElementById('my-cash-pct').textContent = 'เงินสด: ' + (nav > 0 ? ((cash/nav)*100).toFixed(1) : 0) + '% ($' + cash + ')';
+  document.getElementById('my-action').textContent = 'Hold all';
+  document.getElementById('my-action-date').textContent = 'ยังไม่มีการเคลื่อนไหว';
+
+  document.getElementById('cash-input').value = cash;
+  updateCashDisplay(cash);
+
+  // Recommendation
+  const rec = my.recommendation || '';
+  if (rec && !rec.startsWith('Error')) {
+    const lines = rec.split('\n').filter(l => l.trim());
+    const headline = lines.find(l => l.startsWith('###'))?.replace(/###\s*/, '') || 'คำแนะนำสัปดาห์นี้';
+    document.getElementById('my-rec-headline').textContent = headline;
+    let html = rec
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+      .replace(/^##\s+(.+)$/gm, '<h3>$1</h3>')
+      .replace(/\n/g, '<br>');
+    html = html
+      .replace(/\bHOLD\b/g, '<span class="hold">HOLD</span>')
+      .replace(/\bSELL\b/g, '<span class="sell">SELL</span>')
+      .replace(/\bBUY\b/g, '<span class="buy">BUY</span>');
+    document.getElementById('my-rec-body').innerHTML = html;
+  } else {
+    document.getElementById('my-rec-headline').textContent = 'รอการวิเคราะห์';
+    document.getElementById('my-rec-body').textContent = rec || 'รัน Weekly analysis เพื่อรับคำแนะนำ';
+  }
+  document.getElementById('rec-date').textContent = D.last_updated_bkk || '—';
+
+  renderHoldingsTable('my-holdings-body', my.holdings || [], false);
+}
+
+// ── AI Portfolio ──────────────────────────────────────────────────────────────
+function renderAiPortfolio() {
+  const ai = D.ai || {};
+  const nav = ai.nav_usd || 0;
+  const cash = ai.cash_usd || 0;
+
+  document.getElementById('ai-nav').textContent = '$' + nav.toLocaleString();
+  document.getElementById('ai-nav-thb').textContent = '฿' + (nav * THB).toLocaleString('th', {maximumFractionDigits: 0});
+  document.getElementById('ai-count').textContent = (ai.holdings || []).length;
+  document.getElementById('ai-cash-display').textContent = 'เงินสด: $' + cash.toLocaleString();
+
+  const decisions = ai.recent_decisions || [];
+  if (decisions.length > 0) {
+    const last = decisions[decisions.length - 1];
+    document.getElementById('ai-last-action').textContent = last.action + ' ' + last.ticker;
+    document.getElementById('ai-last-date').textContent = last.date || '—';
+    // Decision panel
+    document.getElementById('ai-decision-headline').textContent =
+      'AI ' + (last.action === 'BUY' ? 'ซื้อ' : 'ขาย') + ' ' + last.ticker;
+    document.getElementById('ai-decision-body').innerHTML =
+      '<p>' + (last.reason || '—') + '</p><p style="margin-top:8px;color:var(--muted);font-size:12px">ราคา: $' + (last.price || 0).toFixed(2) + ' | มูลค่า: $' + (last.usd || 0).toLocaleString() + '</p>';
+  } else {
+    document.getElementById('ai-last-action').textContent = 'ยังไม่มี';
+    document.getElementById('ai-last-date').textContent = '—';
+    document.getElementById('ai-decision-headline').textContent = 'ยังไม่มีการตัดสินใจ';
+    document.getElementById('ai-decision-body').textContent = 'AI จะประกาศการซื้อ/ขายในรอบ Weekly analysis';
   }
 
-  // Parse markdown-ish recommendation
-  const lines = rec.split('\n').filter(l => l.trim());
-  const headline = lines.find(l => l.startsWith('###'))?.replace(/###\s*/,'') || 'Weekly Recommendation';
-  document.getElementById('action-headline').textContent = headline;
-
-  // Color-code action words
-  let bodyHtml = rec
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
-    .replace(/^##\s+(.+)$/gm, '<h3>$1</h3>')
-    .replace(/\n/g, '<br>');
-
-  // Highlight key words
-  bodyHtml = bodyHtml
-    .replace(/\bHOLD\b/g, '<span class="hold">HOLD</span>')
-    .replace(/\bSELL\b/g, '<span class="sell">SELL</span>')
-    .replace(/\bBUY\b/g, '<span class="buy">BUY</span>');
-
-  document.getElementById('action-body').innerHTML = bodyHtml;
-  document.getElementById('rec-date').textContent = portfolioData.last_updated_bkk || '—';
+  renderHoldingsTable('ai-holdings-body', ai.holdings || [], true);
+  renderDecisionHistory(decisions);
 }
 
-// ── Holdings ──────────────────────────────────────────────────────────────
-function renderHoldings() {
-  const holdings = portfolioData.holdings || [];
-  const tbody = document.getElementById('holdings-body');
+function renderHoldingsTable(tbodyId, holdings, isAi) {
+  const tbody = document.getElementById(tbodyId);
   tbody.innerHTML = '';
-
   holdings.forEach((h, i) => {
     const status = h.thesis_status || 'generating';
-    const badgeClass = {
-      intact: 'badge-intact', evolving: 'badge-evolving',
-      'at_risk': 'badge-at-risk', 'at-risk': 'badge-at-risk',
-      invalidated: 'badge-invalidated', review: 'badge-review',
-      generating: 'badge-generating'
+    const bc = {
+      intact:'badge-intact', evolving:'badge-evolving',
+      at_risk:'badge-at-risk', 'at-risk':'badge-at-risk',
+      invalidated:'badge-invalidated', review:'badge-review',
+      generating:'badge-generating'
     }[status] || 'badge-generating';
-
-    const changePct = h.change_pct || 0;
-    const changeClass = changePct > 0 ? 'change-pos' : changePct < 0 ? 'change-neg' : 'change-neu';
-    const changeStr = changePct !== 0 ? `${changePct > 0 ? '+' : ''}${changePct.toFixed(1)}%` : '—';
+    const c = h.change_pct || 0;
+    const cc = c > 0 ? 'pos' : c < 0 ? 'neg' : 'neu';
+    const cs = c !== 0 ? (c > 0 ? '+' : '') + c.toFixed(1) + '%' : '—';
+    const fillClass = isAi ? 'weight-fill ai' : 'weight-fill';
 
     const row = document.createElement('tr');
-    row.onclick = () => toggleThesis(i, h.ticker);
+    row.onclick = () => toggleThesis(tbodyId + '-' + i, h.ticker);
     row.innerHTML = `
       <td>
         <div class="ticker-cell">${h.ticker}</div>
-        <div class="company-cell">${h.note || ''}</div>
+        <div class="note-cell">${h.note || ''}</div>
       </td>
-      <td><span class="badge ${badgeClass}">${status.replace('_',' ')}</span></td>
+      <td><span class="badge ${bc}">${status.replace(/_/g,' ')}</span></td>
       <td>
-        <div class="weight-bar-wrap">
-          <div class="weight-bar"><div class="weight-fill" style="width:${Math.min(h.weight_pct||0, 100)}%"></div></div>
+        <div class="weight-wrap">
+          <div class="weight-bar"><div class="${fillClass}" style="width:${Math.min(h.weight_pct||0,100)}%"></div></div>
           <span class="weight-num">${(h.weight_pct||0).toFixed(1)}%</span>
         </div>
       </td>
-      <td><span class="${changeClass}">${changeStr}</span></td>
-    `;
+      <td><span class="${cc}">${cs}</span></td>`;
     tbody.appendChild(row);
 
-    // Thesis drawer
     const drawer = document.createElement('tr');
-    drawer.innerHTML = `<td colspan="4" style="padding:0"><div class="thesis-drawer" id="thesis-${i}"><div class="thesis-content">${h.news_summary || 'Click to load thesis...'}</div></div></td>`;
+    drawer.innerHTML = `<td colspan="4" style="padding:0"><div class="thesis-drawer" id="${tbodyId}-${i}"><div class="thesis-content">${h.news_summary || 'กดเพื่อโหลด thesis...'}</div></div></td>`;
     tbody.appendChild(drawer);
   });
 }
 
-function toggleThesis(i, ticker) {
-  const drawer = document.getElementById(`thesis-${i}`);
+function renderDecisionHistory(decisions) {
+  const el = document.getElementById('ai-decisions-list');
+  if (!decisions || decisions.length === 0) {
+    el.innerHTML = '<div style="padding:16px 20px;color:var(--muted);font-size:13px">ยังไม่มีประวัติ — รอ Weekly analysis</div>';
+    return;
+  }
+  el.innerHTML = [...decisions].reverse().map(d => `
+    <div class="decision-item">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="decision-action ${d.action.toLowerCase()}">${d.action} ${d.ticker}</span>
+        <span class="decision-date">${d.date || ''}</span>
+      </div>
+      <div class="decision-reason">${d.reason || '—'}</div>
+      <div class="decision-date" style="margin-top:2px">$${(d.usd||0).toLocaleString()} @ $${(d.price||0).toFixed(2)}</div>
+    </div>`).join('');
+}
+
+// ── Thesis drawer ─────────────────────────────────────────────────────────────
+function toggleThesis(id, ticker) {
+  const drawer = document.getElementById(id);
+  if (!drawer) return;
   const isOpen = drawer.classList.contains('open');
   document.querySelectorAll('.thesis-drawer.open').forEach(d => d.classList.remove('open'));
   if (!isOpen) {
@@ -446,63 +691,90 @@ function toggleThesis(i, ticker) {
 async function loadThesisFull(ticker, el) {
   try {
     const res = await fetch(`docs/thesis/${ticker}.md?t=${Date.now()}`);
-    if (res.ok) {
-      const text = await res.text();
-      el.textContent = text;
-    }
-  } catch(e) { /* keep existing content */ }
+    if (res.ok) el.textContent = await res.text();
+  } catch(e) {}
 }
 
-// ── Watchlist ─────────────────────────────────────────────────────────────
+// ── Watchlist ─────────────────────────────────────────────────────────────────
 function renderWatchlist() {
-  const wl = portfolioData.watchlist || [];
-  const container = document.getElementById('watchlist-items');
+  const wl = D?.watchlist || [];
+  const el = document.getElementById('watchlist-items');
   if (!wl.length) {
-    container.innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center;font-size:13px;">No watchlist yet</div>';
+    el.innerHTML = '<div style="padding:16px 20px;color:var(--muted);text-align:center;font-size:13px">ยังไม่มี watchlist</div>';
     return;
   }
-  container.innerHTML = wl.map((w, i) => `
-    <div class="watchlist-item">
+  el.innerHTML = wl.map((w, i) => `
+    <div class="wl-item">
       <div>
         <div class="wl-ticker">${w.ticker}</div>
         <div class="wl-reason">${w.reason || '—'}</div>
       </div>
-      <button class="wl-remove" onclick="removeFromWatchlist(${i})" title="Remove">×</button>
-    </div>
-  `).join('');
+      <button class="wl-remove" onclick="removeWatchlist(${i})">×</button>
+    </div>`).join('');
+}
+
+function renderSuggested() {
+  const items = D?.ai_suggested || [];
+  const sec = document.getElementById('suggested-section');
+  const el  = document.getElementById('suggested-items');
+  if (!items.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  const emoji = { high:'🔥', medium:'👀', low:'📌' };
+  el.innerHTML = items.map((s, i) => `
+    <div class="wl-item">
+      <div>
+        <div class="wl-ticker">${emoji[s.priority]||'📌'} ${s.ticker}
+          <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:6px">${s.name||''}</span>
+        </div>
+        <div class="wl-reason">${s.thesis_short||''}</div>
+        <div class="wl-reason" style="margin-top:2px;color:var(--red)">Kill: ${s.kill_condition||''}</div>
+      </div>
+      <button class="btn" style="font-size:11px;padding:5px 10px" onclick="addSuggestedToWatchlist(${i})">+ เพิ่ม</button>
+    </div>`).join('');
 }
 
 async function addToWatchlist() {
   const input = document.getElementById('wl-input');
   const ticker = input.value.trim().toUpperCase();
-  if (!ticker || ticker.length < 1) return;
-
-  // Add to local data and save
-  if (!portfolioData) portfolioData = { watchlist: [] };
-  if (!portfolioData.watchlist) portfolioData.watchlist = [];
-
-  if (portfolioData.watchlist.find(w => w.ticker === ticker)) {
-    alert(`${ticker} is already in your watchlist`);
-    return;
+  if (!ticker) return;
+  if (!D) D = { watchlist: [] };
+  if (!D.watchlist) D.watchlist = [];
+  if (D.watchlist.find(w => w.ticker === ticker)) {
+    showToast(`${ticker} อยู่ใน watchlist แล้ว`); return;
   }
-
-  portfolioData.watchlist.push({ ticker, reason: 'Added manually', added: new Date().toISOString().split('T')[0] });
+  D.watchlist.push({ ticker, reason: 'เพิ่มเอง', added: new Date().toISOString().split('T')[0] });
   input.value = '';
   renderWatchlist();
-  saveLocalData();
+  saveLocal();
+  showToast(`เพิ่ม ${ticker} เข้า watchlist แล้ว`);
 }
 
-function removeFromWatchlist(i) {
-  if (!portfolioData?.watchlist) return;
-  portfolioData.watchlist.splice(i, 1);
+function addSuggestedToWatchlist(i) {
+  const s = (D?.ai_suggested || [])[i];
+  if (!s) return;
+  if (!D.watchlist) D.watchlist = [];
+  if (D.watchlist.find(w => w.ticker === s.ticker)) {
+    showToast(`${s.ticker} อยู่ใน watchlist แล้ว`); return;
+  }
+  D.watchlist.push({ ticker: s.ticker, reason: s.thesis_short || 'AI แนะนำ', added: new Date().toISOString().split('T')[0] });
   renderWatchlist();
-  saveLocalData();
+  saveLocal();
+  showToast(`เพิ่ม ${s.ticker} เข้า watchlist แล้ว`);
 }
 
-// ── Cash ──────────────────────────────────────────────────────────────────
+function removeWatchlist(i) {
+  if (!D?.watchlist) return;
+  const ticker = D.watchlist[i]?.ticker;
+  D.watchlist.splice(i, 1);
+  renderWatchlist();
+  saveLocal();
+  if (ticker) showToast(`ลบ ${ticker} ออกจาก watchlist แล้ว`);
+}
+
+// ── Cash ──────────────────────────────────────────────────────────────────────
 function updateCashDisplay(usd) {
-  const thb = usd * THB_RATE;
-  document.getElementById('cash-thb').textContent = `฿${thb.toLocaleString('th', {maximumFractionDigits:0})}`;
+  document.getElementById('cash-thb-display').textContent =
+    '฿' + (usd * THB).toLocaleString('th', { maximumFractionDigits: 0 });
 }
 
 document.getElementById('cash-input').addEventListener('input', function() {
@@ -511,82 +783,116 @@ document.getElementById('cash-input').addEventListener('input', function() {
 
 function saveCash() {
   const val = parseFloat(document.getElementById('cash-input').value) || 0;
-  if (portfolioData) {
-    portfolioData.cash_usd = val;
-    portfolioData.cash_thb = val * THB_RATE;
-  }
+  if (D && D.my) { D.my.cash_usd = val; D.my.cash_thb = val * THB; }
   updateCashDisplay(val);
-  saveLocalData();
-  showToast(`Cash updated: $${val} (฿${(val*THB_RATE).toLocaleString('th',{maximumFractionDigits:0})})`);
+  saveLocal();
+  showToast(`บันทึกเงินสด $${val} (฿${(val * THB).toLocaleString('th', {maximumFractionDigits:0})}) แล้ว`);
 }
 
-// ── Local storage for user edits ──────────────────────────────────────────
-function saveLocalData() {
+// ── LocalStorage ──────────────────────────────────────────────────────────────
+function saveLocal() {
   try {
     localStorage.setItem('portfolio_overrides', JSON.stringify({
-      cash_usd: portfolioData?.cash_usd,
-      watchlist: portfolioData?.watchlist
+      cash_usd:  D?.my?.cash_usd,
+      watchlist: D?.watchlist
     }));
   } catch(e) {}
 }
 
-function loadLocalOverrides() {
+function applyLocalOverrides() {
   try {
     const saved = localStorage.getItem('portfolio_overrides');
-    if (saved && portfolioData) {
-      const overrides = JSON.parse(saved);
-      if (overrides.cash_usd != null) {
-        portfolioData.cash_usd = overrides.cash_usd;
-        document.getElementById('cash-input').value = overrides.cash_usd;
-        updateCashDisplay(overrides.cash_usd);
-      }
-      if (overrides.watchlist) portfolioData.watchlist = overrides.watchlist;
+    if (!saved || !D) return;
+    const o = JSON.parse(saved);
+    if (o.cash_usd != null && D.my) {
+      D.my.cash_usd = o.cash_usd;
+      D.my.cash_thb = o.cash_usd * THB;
+      document.getElementById('cash-input').value = o.cash_usd;
+      updateCashDisplay(o.cash_usd);
     }
+    if (o.watchlist) D.watchlist = o.watchlist;
   } catch(e) {}
 }
 
-// ── Toast ─────────────────────────────────────────────────────────────────
+// ── Charts ────────────────────────────────────────────────────────────────────
+let myChart = null, aiChart = null;
+
+function drawMyChart() {
+  const ctx = document.getElementById('my-chart').getContext('2d');
+  const snaps = D?.nav_history || [];
+  if (myChart) myChart.destroy();
+  myChart = new Chart(ctx, buildChartConfig(snaps, '#2a6b3a', 'พอร์ตของฉัน'));
+}
+
+function drawAiChart() {
+  const ctx = document.getElementById('ai-chart').getContext('2d');
+  const snaps = D?.nav_history || [];
+  if (aiChart) aiChart.destroy();
+  aiChart = new Chart(ctx, buildChartConfig(snaps, '#5b3db5', 'AI Portfolio'));
+}
+
+function buildChartConfig(snaps, color, label) {
+  const labels = snaps.map(s => s.date);
+  const navs   = snaps.map(s => s.nav_usd);
+  return {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label,
+        data: navs,
+        borderColor: color,
+        backgroundColor: color + '18',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#dfe1da' }, ticks: { font: { size: 10 }, color: '#6b7068' } },
+        y: { grid: { color: '#dfe1da' }, ticks: { font: { size: 10 }, color: '#6b7068',
+             callback: v => '$' + v.toLocaleString() } }
+      }
+    }
+  };
+}
+
+// ── Clock ─────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const utc   = Date.now() + new Date().getTimezoneOffset() * 60000;
+  const bkk   = new Date(utc + 7 * 3600000);
+  const hhmm  = bkk.getHours().toString().padStart(2,'0') + ':' + bkk.getMinutes().toString().padStart(2,'0') + ' น.';
+  document.getElementById('bkk-clock').textContent = hhmm;
+  document.getElementById('bkk-clock-ai').textContent = hhmm;
+
+  const total = bkk.getHours() * 60 + bkk.getMinutes();
+  const wd    = bkk.getDay() >= 1 && bkk.getDay() <= 5;
+  let status  = 'ตลาด US ปิด';
+  if (wd && (total >= 1230 || total < 180)) status = '🟢 ตลาด US เปิดอยู่';
+  else if (wd && total >= 1200 && total < 1230) status = '🟡 Pre-market (เปิดอีก ' + (1230 - total) + ' นาที)';
+
+  document.getElementById('market-status').textContent = status;
+  document.getElementById('market-status-ai').textContent = status;
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--accent);color:#0e0f0e;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;z-index:9999;animation:slideUp 0.2s ease';
+  t.className = 'toast';
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
 }
 
-// ── Clock ─────────────────────────────────────────────────────────────────
-function updateClock() {
-  const now = new Date();
-  const bkkOffset = 7 * 60;
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-  const bkk = new Date(utc + bkkOffset * 60000);
-
-  const h = bkk.getHours().toString().padStart(2,'0');
-  const m = bkk.getMinutes().toString().padStart(2,'0');
-  document.getElementById('bkk-clock').textContent = `${h}:${m} น.`;
-
-  // Market status
-  const bkkH = bkk.getHours();
-  const bkkMin = bkk.getMinutes();
-  const totalMin = bkkH * 60 + bkkMin;
-  const isWeekday = bkk.getDay() >= 1 && bkk.getDay() <= 5;
-
-  let status = 'ตลาด US ปิด';
-  if (isWeekday && totalMin >= 20*60+30 && totalMin < 24*60) status = '🟢 ตลาด US เปิดอยู่';
-  else if (isWeekday && totalMin >= 0 && totalMin < 3*60) status = '🟢 ตลาด US เปิดอยู่';
-  else if (isWeekday && totalMin >= 20*60 && totalMin < 20*60+30) status = '🟡 Pre-market (เปิดอีก ' + (20*60+30 - totalMin) + ' นาที)';
-
-  document.getElementById('market-open-status').textContent = status;
-}
-
-// ── Init ──────────────────────────────────────────────────────────────────
-loadData().then(() => {
-  loadLocalOverrides();
-  renderWatchlist();
-});
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadData();
 updateClock();
 setInterval(updateClock, 30000);
-setInterval(loadData, 5 * 60 * 1000); // refresh every 5min
+setInterval(loadData, 5 * 60 * 1000);
 </script>
 </body>
 </html>

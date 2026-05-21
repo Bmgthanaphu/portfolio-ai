@@ -1,0 +1,18 @@
+{
+  "meta": {
+    "inception_date": "2026-05-21",
+    "inception_nav_usd": 3142,
+    "last_updated": "2026-05-21"
+  },
+  "nav_approx_usd": 3142,
+  "cash_usd": 278,
+  "holdings": [
+    {"ticker": "AMZN", "weight_pct": 43.73, "cost_basis_usd": null, "note": "AWS growth, advertising margin"},
+    {"ticker": "JEPQ", "weight_pct": 21.63, "cost_basis_usd": null, "note": "Income ETF - may not fit growth profile"},
+    {"ticker": "MSFT", "weight_pct": 16.49, "cost_basis_usd": null, "note": "Copilot enterprise, Azure growth"},
+    {"ticker": "META", "weight_pct": 9.48,  "cost_basis_usd": null, "note": "Ad platform, AI efficiency"},
+    {"ticker": "VOO",  "weight_pct": 5.86,  "cost_basis_usd": null, "note": "ETF - overlaps with existing holdings"},
+    {"ticker": "IONQ", "weight_pct": 2.70,  "cost_basis_usd": null, "note": "Speculative quantum - no strong thesis"}
+  ],
+  "decisions": []
+}
