@@ -7,8 +7,6 @@ Timezone: Asia/Bangkok (UTC+7) | Market: NYSE/NASDAQ (UTC-4/5)
 
 import os, json, sys, time, datetime, requests
 from pathlib import Path
-from google import genai
-from google.genai import types
 
 # ── Config ─────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent.parent
@@ -16,13 +14,33 @@ DATA_DIR = BASE_DIR / "data"
 THESIS_DIR = BASE_DIR / "docs" / "thesis"
 THESIS_DIR.mkdir(parents=True, exist_ok=True)
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "5731895043")
 THB_RATE = float(os.environ.get("THB_RATE", "36"))  # USD/THB rate
 
-client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
-GEMINI_MODEL = "gemini-2.0-flash-lite"
+OPENAI_MODEL = "gpt-4o-mini"
+
+def call_ai(prompt: str) -> str:
+    """Call OpenAI API"""
+    if not OPENAI_API_KEY:
+        return "Error: No OPENAI_API_KEY set."
+    headers = {
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": OPENAI_MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.3
+    }
+    try:
+        r = requests.post("https://api.openai.com/v1/chat/completions",
+                          headers=headers, json=payload, timeout=30)
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"]
+    except Exception as e:
+        return f"Error: {e}"
 
 MODE = sys.argv[1] if len(sys.argv) > 1 else "scan"
 # Modes: scan | weekly | quarterly | earnings
@@ -124,10 +142,7 @@ def save_thesis(ticker: str, content: str):
 
 # ── AI Calls ───────────────────────────────────────────────────────────────
 def generate_thesis(ticker: str, price_data: dict) -> str:
-    """Ask Gemini to generate thesis + kill conditions for a stock"""
-    if not client:
-        return f"# {ticker} Thesis\n**Error:** No GEMINI_API_KEY set."
-
+    """Ask AI to generate thesis + kill conditions for a stock"""
     prompt = f"""You are a disciplined long-term investor (Nick Sleep style).
 Analyze {ticker} at current price ${price_data['price']:.2f}.
 
@@ -164,20 +179,19 @@ Write a thesis file in this exact format:
 Be specific. No vague statements. If you don't know something, say so.
 Base kill conditions on BUSINESS events, not price movements.
 """
-    try:
-        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
-        return response.text
-    except Exception as e:
-        return f"# {ticker} Thesis\n**Error generating thesis:** {e}"
+    result = call_ai(prompt)
+    if result.startswith("Error:"):
+        return f"# {ticker} Thesis\n**Error generating thesis:** {result}"
+    return result
 
 
 def scan_news_for_urgency(ticker: str, news_items: list, existing_thesis: str) -> dict:
-    """Ask Gemini if any news items are urgent or thesis-threatening"""
+    """Ask AI if any news items are urgent or thesis-threatening"""
     if not news_items:
         return {"urgent": False, "alert": False, "summary": "No news found"}
-    if not client:
+    if not OPENAI_API_KEY:
         return {"urgent": False, "alert": False, "thesis_status": "intact",
-                "summary": "No GEMINI_API_KEY — skipping AI analysis", "action": "none", "reason": ""}
+                "summary": "No OPENAI_API_KEY — skipping AI analysis", "action": "none", "reason": ""}
 
     news_text = "\n".join([f"- {n['title']}: {n['description'][:200]}" for n in news_items])
     thesis_snippet = existing_thesis[:800] if existing_thesis else "No thesis yet"
@@ -205,10 +219,8 @@ Alert = something changed worth noting, not urgent.
 Intact = thesis still valid. Evolving = thesis changing but not broken.
 At risk = one or more kill conditions getting close. Invalidated = sell.
 """
+    text = call_ai(prompt).strip()
     try:
-        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
-        text = response.text.strip()
-        # Strip markdown code blocks if present
         if "```" in text:
             text = text.split("```")[1]
             if text.startswith("json"):
@@ -221,8 +233,8 @@ At risk = one or more kill conditions getting close. Invalidated = sell.
 
 def generate_weekly_recommendation(portfolio: dict, holdings_analysis: list) -> str:
     """Generate weekly portfolio recommendation"""
-    if not client:
-        return "Error: No GEMINI_API_KEY set — weekly recommendation skipped."
+    if not OPENAI_API_KEY:
+        return "Error: No OPENAI_API_KEY set — weekly recommendation skipped."
 
     now = bangkok_now()
     cash_usd = portfolio["cash"]["usd"]
@@ -277,11 +289,7 @@ If action needed, be VERY specific:
 Be direct. Give a clear recommendation. "Do nothing" is a valid recommendation if thesis is intact.
 Never recommend based on price movement alone.
 """
-    try:
-        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
-        return response.text
-    except Exception as e:
-        return f"Error generating recommendation: {e}"
+    return call_ai(prompt)
 
 
 # ── Main Modes ──────────────────────────────────────────────────────────────
