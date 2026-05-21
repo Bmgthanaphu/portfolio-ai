@@ -201,6 +201,26 @@ tbody td { padding: 13px 20px; vertical-align: middle; }
 .decision-date { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .decision-reason { font-size: 12px; color: var(--text); margin-top: 3px; }
 
+/* ── Lessons ── */
+.lesson-item { padding: 12px 20px; border-bottom: 1px solid var(--border); }
+.lesson-item:last-child { border-bottom: none; }
+.lesson-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+.lesson-outcome { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+                  text-transform: uppercase; letter-spacing: 0.06em; }
+.lesson-outcome.correct   { color: var(--accent); }
+.lesson-outcome.incorrect { color: var(--red); }
+.lesson-outcome.too_early { color: var(--amber); }
+.lesson-outcome.pending   { color: var(--muted); }
+.lesson-ticker { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; }
+.lesson-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+.lesson-detail { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.patterns-box { padding: 12px 20px; background: var(--ai-bg); border-top: 1px solid var(--border);
+                font-size: 12px; color: var(--text); line-height: 1.7; }
+.patterns-box strong { color: var(--ai-color); font-size: 11px; font-family: 'DM Mono', monospace;
+                       text-transform: uppercase; letter-spacing: 0.06em; }
+.accuracy-bar { margin: 10px 20px 14px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.accuracy-fill { height: 100%; background: var(--ai-color); border-radius: 3px; transition: width 0.4s ease; }
+
 /* ── Philosophy ── */
 .phil-item { padding: 10px 20px; border-bottom: 1px solid var(--border);
              display: flex; justify-content: space-between; align-items: center; }
@@ -474,6 +494,21 @@ tbody td { padding: 13px 20px; vertical-align: middle; }
           </div>
         </div>
 
+        <!-- AI Lessons -->
+        <div class="section">
+          <div class="section-header">
+            <span class="section-title">📚 บทเรียน AI</span>
+            <span id="ai-accuracy-label" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">—</span>
+          </div>
+          <div class="accuracy-bar" id="accuracy-bar-wrap" style="display:none">
+            <div class="accuracy-fill" id="accuracy-bar" style="width:0%"></div>
+          </div>
+          <div id="lessons-list">
+            <div style="padding:16px 20px;color:var(--muted);font-size:13px">ยังไม่มีบทเรียน — รอ Weekly analysis</div>
+          </div>
+          <div id="patterns-box" class="patterns-box" style="display:none"></div>
+        </div>
+
         <!-- Philosophy (AI) -->
         <div class="section">
           <div class="section-header"><span class="section-title">🧠 กฎของ AI</span></div>
@@ -618,6 +653,67 @@ function renderAiPortfolio() {
 
   renderHoldingsTable('ai-holdings-body', ai.holdings || [], true);
   renderDecisionHistory(decisions);
+  renderLessons(ai.lessons || {});
+}
+
+function renderLessons(lessonsData) {
+  const recent   = lessonsData.recent   || [];
+  const patterns = lessonsData.patterns || {};
+  const stats    = lessonsData.stats    || {};
+
+  const total   = stats.total_decisions || 0;
+  const correct = stats.correct || 0;
+  const acc     = total > 0 ? Math.round(correct / total * 100) : 0;
+
+  // accuracy label + bar
+  const label = document.getElementById('ai-accuracy-label');
+  const barWrap = document.getElementById('accuracy-bar-wrap');
+  const bar  = document.getElementById('accuracy-bar');
+  if (total > 0) {
+    label.textContent = `ถูก ${correct}/${total} (${acc}%)`;
+    barWrap.style.display = 'block';
+    bar.style.width = acc + '%';
+  } else {
+    label.textContent = 'ยังไม่มีสถิติ';
+    barWrap.style.display = 'none';
+  }
+
+  // lesson items
+  const el = document.getElementById('lessons-list');
+  if (!recent.length) {
+    el.innerHTML = '<div style="padding:16px 20px;color:var(--muted);font-size:13px">ยังไม่มีบทเรียน — รอ Weekly analysis</div>';
+  } else {
+    const outcomeEmoji = { correct:'✅', incorrect:'❌', too_early:'⏰', pending:'⏳' };
+    const outcomeLabel = { correct:'ถูก', incorrect:'ผิด', too_early:'เร็วไป', pending:'รอดู' };
+    el.innerHTML = [...recent].reverse().map(l => `
+      <div class="lesson-item">
+        <div class="lesson-header">
+          <div>
+            <span class="lesson-ticker">${outcomeEmoji[l.outcome]||'❓'} ${l.action} ${l.ticker}</span>
+            <span class="lesson-outcome ${l.outcome}" style="margin-left:8px">${outcomeLabel[l.outcome]||l.outcome}</span>
+          </div>
+          <span class="lesson-detail">${l.change_pct != null ? (l.change_pct > 0 ? '+' : '') + l.change_pct.toFixed(1) + '%' : ''}</span>
+        </div>
+        <div class="lesson-text">📝 ${l.lesson || '—'}</div>
+        ${l.outcome_detail ? `<div class="lesson-detail" style="margin-top:2px">${l.outcome_detail}</div>` : ''}
+      </div>`).join('');
+  }
+
+  // patterns summary
+  const pbox = document.getElementById('patterns-box');
+  const strengths  = patterns.strengths  || [];
+  const weaknesses = patterns.weaknesses || [];
+  const summary    = patterns.summary    || '';
+  if (summary && !summary.includes('ยังไม่มี') && !summary.includes('ยังมีบทเรียนน้อย')) {
+    let html = '';
+    if (strengths.length)  html += `<strong>จุดแข็ง</strong><br>${strengths.map(s=>`• ${s}`).join('<br>')}<br>`;
+    if (weaknesses.length) html += `<strong>จุดอ่อน</strong><br>${weaknesses.map(w=>`• ${w}`).join('<br>')}<br>`;
+    if (summary)           html += `<strong>สรุป</strong><br>${summary}`;
+    pbox.innerHTML = html;
+    pbox.style.display = 'block';
+  } else {
+    pbox.style.display = 'none';
+  }
 }
 
 function renderHoldingsTable(tbodyId, holdings, isAi) {

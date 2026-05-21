@@ -1,8 +1,8 @@
 {
-  "last_updated": "2026-05-21T14:13:42.293929+07:00",
-  "last_updated_bkk": "21 May 2026, 14:13 น. (BKK)",
+  "last_updated": "2026-05-21T14:49:09.898825+07:00",
+  "last_updated_bkk": "21 May 2026, 14:49 น. (BKK)",
   "spy_price": 741.25,
-  "next_scan_bkk": "14:00 น. (BKK)",
+  "next_scan_bkk": "15:00 น. (BKK)",
   "my": {
     "nav_usd": 3142,
     "nav_thb": 113112.0,
@@ -13,9 +13,9 @@
         "ticker": "AMZN",
         "shares": null,
         "weight_pct": 43.73,
-        "thesis_status": "evolving",
+        "thesis_status": "intact",
         "note": "AWS growth, advertising margin",
-        "news_summary": "Amazon ได้เปิดตัวบริการจัดส่งสินค้าภายใน 30 นาที ซึ่งอาจส่งผลกระทบต่อการดำเนินงานและผลกำไรในอนาคต ขณะเดียวกันก็มีการฟ้องร้องเกี่ยวกับการเรียกเก็บภาษีที่ไม่ถูกต้อง",
+        "news_summary": "ไม่มี API key",
         "price": 265.01,
         "change_pct": 2.19
       },
@@ -23,9 +23,9 @@
         "ticker": "JEPQ",
         "shares": null,
         "weight_pct": 21.63,
-        "thesis_status": "evolving",
+        "thesis_status": "intact",
         "note": "Income ETF - may not fit growth profile",
-        "news_summary": "ข่าวล่าสุดเกี่ยวกับ JEPQ แสดงให้เห็นถึงความเสี่ยงที่ซ่อนอยู่จากการลงทุนใน ETF นี้ โดยเฉพาะความเสี่ยงจากคู่สัญญา ELN ที่อาจส่งผลกระทบต่อผลตอบแทนที่นักลงทุนคาดหวัง.",
+        "news_summary": "ไม่มี API key",
         "price": 59.98,
         "change_pct": 0.64
       },
@@ -35,7 +35,7 @@
         "weight_pct": 16.49,
         "thesis_status": "intact",
         "note": "Copilot enterprise, Azure growth",
-        "news_summary": "ข่าวล่าสุดเกี่ยวกับ Microsoft แสดงให้เห็นถึงการเติบโตในตลาดคลาวด์และความหลากหลายของรายได้ ซึ่งยังคงสนับสนุนความเชื่อมั่นในหุ้น MSFT.",
+        "news_summary": "ไม่มี API key",
         "price": 421.06,
         "change_pct": 0.87
       },
@@ -43,9 +43,9 @@
         "ticker": "META",
         "shares": null,
         "weight_pct": 9.48,
-        "thesis_status": "evolving",
+        "thesis_status": "intact",
         "note": "Ad platform, AI efficiency",
-        "news_summary": "META กำลังเผชิญกับการปรับโครงสร้างองค์กรครั้งใหญ่ โดยมีการเลิกจ้างพนักงานจำนวนมากและเปลี่ยนทิศทางการลงทุนไปที่เทคโนโลยี AI ซึ่งอาจส่งผลต่อการเติบโตในอนาคต",
+        "news_summary": "ไม่มี API key",
         "price": 605.06,
         "change_pct": 0.41
       },
@@ -55,7 +55,7 @@
         "weight_pct": 5.86,
         "thesis_status": "intact",
         "note": "ETF - overlaps with existing holdings",
-        "news_summary": "ข่าวล่าสุดแสดงให้เห็นถึงการสนับสนุนจากนักลงทุนที่มีชื่อเสียงสำหรับ VOO และการเปรียบเทียบผลตอบแทนกับ ETF อื่น ๆ ที่มีความคล้ายคลึงกัน ซึ่งยังคงสนับสนุนแนวทางการลงทุนใน VOO.",
+        "news_summary": "ไม่มี API key",
         "price": 681.57,
         "change_pct": 1.03
       },
@@ -63,14 +63,14 @@
         "ticker": "IONQ",
         "shares": null,
         "weight_pct": 2.7,
-        "thesis_status": "evolving",
+        "thesis_status": "intact",
         "note": "Speculative quantum - no strong thesis",
-        "news_summary": "IONQ ยังคงมีความแข็งแกร่งในตลาดควอนตัมคอมพิวติ้ง แต่มีความผันผวนในราคาหุ้นและข่าวที่เกี่ยวข้องกับคู่แข่งที่มีการเติบโตอย่างรวดเร็ว.",
+        "news_summary": "ไม่มี API key",
         "price": 52.47,
         "change_pct": 8.32
       }
     ],
-    "recommendation": "## คำแนะนำสัปดาห์นี้ — 21 May 2026\n\n### การตัดสินใจ\n[HOLD ทั้งหมด]\n\n### สถานะ Holdings\n- AMZN: EVOLVING - มีการเปิดตัวบริการใหม่ที่อาจส่งผลต่อผลกำไรในอนาคต\n- JEPQ: EVOLVING - มีความเสี่ยงจากคู่สัญญา ELN ที่อาจกระทบผลตอบแทน\n- MSFT: INTACT - การเติบโตในตลาดคลาวด์ยังคงสนับสนุนความเชื่อมั่น\n- META: EVOLVING - การปรับโครงสร้างองค์กรอาจส่งผลต่อการเติบโต\n- VOO: INTACT - ได้รับการสนับสนุนจากนักลงทุนที่มีชื่อเสียง\n- IONQ: EVOLVING - มีความแข็งแกร่งในตลาดควอนตัมคอมพิวติ้งแต่ราคาหุ้นผันผวน\n\n### กลยุทธ์เงินสด\n[เก็บเงินสด $278.00 (฿10,008) ไว้เพื่อรอซื้อหุ้นที่มีศักยภาพในอนาคต]\n\n### Watchlist — ใกล้ซื้อแล้วไหม\n[GOOGL ใกล้ที่สุด ต้องรอข้อมูลเพิ่มเติมเกี่ยวกับการพัฒนา AI และความได้เปรียบด้าน TPU]\n\n### เหตุการณ์สำคัญสัปดาห์นี้\n[ติดตามผลประกอบการของบริษัทในพอร์ตและการประชุมของ Fed ที่อาจมีผลกระทบต่อแนวโน้มตลาด]"
+    "recommendation": ""
   },
   "ai": {
     "nav_usd": 3142,
@@ -132,7 +132,22 @@
         "reason": "GOOGL มีความได้เปรียบด้าน AI และ TPU ซึ่งสามารถช่วยให้บริษัทเติบโตได้อย่างต่อเนื่องในอนาคต การลงทุนในหุ้นนี้จะช่วยกระจายความเสี่ยงและเพิ่มโอกาสในการเติบโต.",
         "urgency": "this_week"
       }
-    ]
+    ],
+    "pending_decisions": [],
+    "lessons": {
+      "recent": [],
+      "patterns": {
+        "strengths": [],
+        "weaknesses": [],
+        "summary": "ยังไม่มีข้อมูลเพียงพอ — รอการเทรดครั้งแรก"
+      },
+      "stats": {
+        "total_decisions": 0,
+        "correct": 0,
+        "incorrect": 0,
+        "pending": 0
+      }
+    }
   },
   "watchlist": [
     {
@@ -160,29 +175,7 @@
       "reason": "GLP-1 monopoly potential"
     }
   ],
-  "ai_suggested": [
-    {
-      "ticker": "CRM",
-      "name": "Salesforce, Inc.",
-      "thesis_short": "Salesforce มีโมเดลธุรกิจที่แข็งแกร่งในด้านการจัดการลูกค้าสัมพันธ์ (CRM) และมีการเติบโตอย่างต่อเนื่องจากการขยายบริการคลาวด์และ AI ในองค์กร ทำให้มีศักยภาพในการเติบโตในระยะยาวได้ดี",
-      "kill_condition": "การลดลงของการใช้จ่ายด้านเทคโนโลยีในองค์กรหรือการเกิดการแข่งขันที่รุนแรงจากคู่แข่ง",
-      "priority": "high"
-    },
-    {
-      "ticker": "ADBE",
-      "name": "Adobe Inc.",
-      "thesis_short": "Adobe มีผลิตภัณฑ์ที่เป็นที่นิยมในตลาดสร้างสรรค์และการตลาดดิจิทัล โดยเฉพาะ Creative Cloud ที่มีการเติบโตอย่างต่อเนื่องและมีการขยายเข้าสู่ AI และการวิเคราะห์ข้อมูล ทำให้มีโอกาสเติบโตในอนาคต",
-      "kill_condition": "การเปลี่ยนแปลงในแนวโน้มการใช้ซอฟต์แวร์หรือการเกิดคู่แข่งใหม่ที่มีนวัตกรรมดีกว่า",
-      "priority": "medium"
-    },
-    {
-      "ticker": "NOW",
-      "name": "ServiceNow, Inc.",
-      "thesis_short": "ServiceNow มีโมเดลธุรกิจที่แข็งแกร่งในด้านการจัดการบริการไอทีและการดำเนินงานในองค์กร โดยมีการเติบโตที่สูงจากการขยายตลาดและการนำเสนอผลิตภัณฑ์ใหม่ที่ตอบโจทย์ความต้องการของลูกค้า",
-      "kill_condition": "การลดลงของความต้องการในการจัดการบริการไอทีหรือการเกิดคู่แข่งที่มีเทคโนโลยีที่ดีกว่า",
-      "priority": "medium"
-    }
-  ],
+  "ai_suggested": [],
   "philosophy": {
     "style": "Quality Growth",
     "hold_min_months": 6,
